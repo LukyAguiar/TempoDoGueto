@@ -13,7 +13,7 @@ type Props = {
   defaultValues?: Partial<{
     name: string;
     durationMinutes: number;
-    price: string;
+    price: string | number | null;
     isActive: boolean;
   }>;
   onSuccess?: () => void;
@@ -31,7 +31,7 @@ export function ServiceForm({ serviceId, defaultValues, onSuccess }: Props) {
     defaultValues: {
       name: defaultValues?.name ?? "",
       durationMinutes: defaultValues?.durationMinutes ?? 30,
-      price: defaultValues?.price ?? "",
+      price: defaultValues?.price ? Number(defaultValues.price) : null,
       isActive: defaultValues?.isActive ?? true,
     },
   });
