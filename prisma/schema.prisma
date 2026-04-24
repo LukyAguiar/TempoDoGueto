@@ -1,17 +1,109 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("TEMPO_DO_GUETO_DATABASE_URL
+")
 }
 
-// ─────────────────────────────────────────────
-// Enums
-// ─────────────────────────────────────────────
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         UserRole  @default(BARBER)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  business     Business?
+
+  @@map("users")
+}
+
+model Business {
+  id           String         @id @default(cuid())
+  userId       String         @unique
+  name         String
+  slug         String         @unique
+  phone        String?
+  address      String?
+  bio          String?
+  logoUrl      String?
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  appointments Appointment[]
+  availability Availability[]
+  blockedSlots BlockedSlot[]
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services     Service[]
+
+  @@map("businesses")
+}
+
+model Service {
+  id              String        @id @default(cuid())
+  businessId      String
+  name            String
+  durationMinutes Int
+  price           Decimal?      @db.Decimal(10, 2)
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  appointments    Appointment[]
+  business        Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("services")
+}
+
+model Availability {
+  id         String   @id @default(cuid())
+  businessId String
+  weekDay    Int
+  startTime  String
+  endTime    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, weekDay])
+  @@map("availability")
+}
+
+model BlockedSlot {
+  id         String   @id @default(cuid())
+  businessId String
+  date       DateTime @db.Date
+  startTime  String
+  endTime    String
+  reason     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("blocked_slots")
+}
+
+model Appointment {
+  id            String            @id @default(cuid())
+  businessId    String
+  serviceId     String
+  customerName  String
+  customerPhone String
+  date          DateTime          @db.Date
+  startTime     String
+  endTime       String
+  status        AppointmentStatus @default(PENDING)
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  business      Business          @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  service       Service           @relation(fields: [serviceId], references: [id])
+
+  @@map("appointments")
+}
 
 enum UserRole {
   ADMIN
@@ -23,131 +115,4 @@ enum AppointmentStatus {
   CONFIRMED
   CANCELED
   COMPLETED
-}
-
-// ─────────────────────────────────────────────
-// Auth
-// ─────────────────────────────────────────────
-
-model User {
-  id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
-  passwordHash String
-  role         UserRole @default(BARBER)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  business Business?
-
-  @@map("users")
-}
-
-// ─────────────────────────────────────────────
-// Business
-// ─────────────────────────────────────────────
-
-model Business {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  name      String
-  slug      String   @unique
-  phone     String?
-  address   String?
-  bio       String?
-  logoUrl   String?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  services      Service[]
-  availability  Availability[]
-  blockedSlots  BlockedSlot[]
-  appointments  Appointment[]
-
-  @@map("businesses")
-}
-
-// ─────────────────────────────────────────────
-// Services
-// ─────────────────────────────────────────────
-
-model Service {
-  id              String   @id @default(cuid())
-  businessId      String
-  name            String
-  durationMinutes Int
-  price           Decimal? @db.Decimal(10, 2)
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  business     Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  appointments Appointment[]
-
-  @@map("services")
-}
-
-// ─────────────────────────────────────────────
-// Availability (recurring weekly schedule)
-// ─────────────────────────────────────────────
-
-model Availability {
-  id         String   @id @default(cuid())
-  businessId String
-  weekDay    Int      // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  startTime  String   // "HH:mm"
-  endTime    String   // "HH:mm"
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-
-  @@unique([businessId, weekDay])
-  @@map("availability")
-}
-
-// ─────────────────────────────────────────────
-// BlockedSlot (manual blocks)
-// ─────────────────────────────────────────────
-
-model BlockedSlot {
-  id         String   @id @default(cuid())
-  businessId String
-  date       DateTime @db.Date
-  startTime  String   // "HH:mm"
-  endTime    String   // "HH:mm"
-  reason     String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-
-  @@map("blocked_slots")
-}
-
-// ─────────────────────────────────────────────
-// Appointments
-// ─────────────────────────────────────────────
-
-model Appointment {
-  id             String            @id @default(cuid())
-  businessId     String
-  serviceId      String
-  customerName   String
-  customerPhone  String
-  date           DateTime          @db.Date
-  startTime      String            // "HH:mm"
-  endTime        String            // "HH:mm"
-  status         AppointmentStatus @default(PENDING)
-  notes          String?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-
-  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  service  Service  @relation(fields: [serviceId], references: [id])
-
-  @@map("appointments")
 }
