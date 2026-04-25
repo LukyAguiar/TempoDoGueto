@@ -28,16 +28,16 @@ export default async function AdminUsersPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="" style={{borderBottom:"1px solid rgba(255,255,255,0.06)",backgroundColor:"rgba(255,255,255,0.03)"}}>
-              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{color:"#52525b"">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Barbeiro
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{color:"#52525b"">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Negócio
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{color:"#52525b"">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Status
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{color:"#52525b"">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Cadastro
               </th>
               <th className="px-5 py-3" />
