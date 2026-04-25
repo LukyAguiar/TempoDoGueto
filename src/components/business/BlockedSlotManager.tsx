@@ -62,7 +62,7 @@ export function BlockedSlotManager({ blockedSlots }: Props) {
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
             {serverError && <p className="text-xs" style={{ color: "#ef4444" }}>{serverError}</p>}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Input label="Data" type="date" error={errors.date?.message} {...register("date")} />
               <Input label="Início" type="time" error={errors.startTime?.message} {...register("startTime")} />
               <Input label="Fim" type="time" error={errors.endTime?.message} {...register("endTime")} />
@@ -85,7 +85,7 @@ export function BlockedSlotManager({ blockedSlots }: Props) {
       {blockedSlots.map((slot) => (
         <div
           key={slot.id}
-          className="flex items-center justify-between px-4 py-3 rounded-xl"
+          className="flex flex-col gap-3 rounded-2xl px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
           style={{ backgroundColor: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
         >
           <div>
@@ -99,7 +99,7 @@ export function BlockedSlotManager({ blockedSlots }: Props) {
           <button
             onClick={() => handleDelete(slot.id)}
             disabled={deletingId === slot.id}
-            className="p-1.5 rounded-lg disabled:opacity-50 transition-colors"
+            className="self-start rounded-xl p-2 transition-colors hover:bg-red-500/10 disabled:opacity-50 sm:self-auto"
             style={{ color: "#52525b" }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}

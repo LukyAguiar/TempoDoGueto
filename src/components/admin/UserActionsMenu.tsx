@@ -47,7 +47,7 @@ export function UserActionsMenu({ userId, isActive, isSelf }: Props) {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+        className="p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
       >
         <MoreVertical size={16} />
       </button>
@@ -56,17 +56,17 @@ export function UserActionsMenu({ userId, isActive, isSelf }: Props) {
         <>
           {/* Overlay para fechar */}
           <div
-            className="fixed inset-0 z-10"
+            className="fixed inset-0 z-40"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute right-0 bottom-full mb-1 z-20 w-48 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+          <div className="absolute right-0 top-full mt-2 z-50 w-52 overflow-hidden rounded-xl border border-white/10 bg-zinc-950 shadow-2xl shadow-black/40">
             {/* Reset de senha */}
             <button
               onClick={() => {
                 setOpen(false);
                 setResetOpen(true);
               }}
-              className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/10"
             >
               <KeyRound size={15} />
               Redefinir senha
@@ -79,8 +79,8 @@ export function UserActionsMenu({ userId, isActive, isSelf }: Props) {
                 disabled={loading}
                 className={`flex items-center gap-2 w-full px-4 py-2.5 text-sm transition-colors disabled:opacity-50 ${
                   isActive
-                    ? "text-red-600 hover:bg-red-50"
-                    : "text-green-700 hover:bg-green-50"
+                    ? "text-red-400 hover:bg-red-500/10"
+                    : "text-green-400 hover:bg-green-500/10"
                 }`}
               >
                 {isActive ? (

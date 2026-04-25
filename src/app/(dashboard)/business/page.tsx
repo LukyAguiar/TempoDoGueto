@@ -10,20 +10,19 @@ export default async function BusinessPage() {
   const business = await getBusinessByUserId(session!.user.id);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-white mb-1">Meu Negócio</h1>
-      <p className="mb-8" style={{ color: "#71717a" }}>
-        {business
-          ? "Atualize as informações do seu negócio."
-          : "Cadastre seu negócio para começar a receber agendamentos."}
-      </p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-white mb-1">Meu Negócio</h1>
+        <p className="text-sm" style={{ color: "#71717a" }}>
+          {business
+            ? "Atualize as informações do seu negócio."
+            : "Cadastre seu negócio para começar a receber agendamentos."}
+        </p>
+      </div>
 
       <div
-        className="rounded-2xl p-6 max-w-xl"
-        style={{
-          backgroundColor: "#1a1a1a",
-          border: "1px solid rgba(255,255,255,0.06)",
-        }}
+        className="rounded-3xl p-4 sm:p-6 max-w-3xl"
+        style={{ backgroundColor: "#1a1a1a", border: "1px solid rgba(255,255,255,0.06)" }}
       >
         <BusinessForm
           defaultValues={

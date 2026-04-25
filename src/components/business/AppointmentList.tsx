@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, X, CheckCheck, ChevronRight } from "lucide-react";
+import { Check, X, CheckCheck, CalendarDays } from "lucide-react";
 import { changeAppointmentStatus } from "@/server/actions/appointment";
 import { formatDateDisplay } from "@/lib/dates";
 import { APPOINTMENT_STATUS_LABELS } from "@/types";
@@ -23,16 +23,16 @@ type Appointment = {
 type Props = { appointments: Appointment[] };
 
 const STATUS_DOT: Record<AppointmentStatus, string> = {
-  PENDING:   "bg-yellow-400",
+  PENDING: "bg-yellow-400",
   CONFIRMED: "bg-green-500",
-  CANCELED:  "bg-red-500",
+  CANCELED: "bg-red-500",
   COMPLETED: "bg-blue-500",
 };
 
 const STATUS_BADGE: Record<AppointmentStatus, { bg: string; text: string }> = {
-  PENDING:   { bg: "rgba(234,179,8,0.15)",  text: "#f6b914" },
-  CONFIRMED: { bg: "rgba(34,197,94,0.15)",  text: "#22c55e" },
-  CANCELED:  { bg: "rgba(239,68,68,0.15)",  text: "#ef4444" },
+  PENDING: { bg: "rgba(234,179,8,0.15)", text: "#f6b914" },
+  CONFIRMED: { bg: "rgba(34,197,94,0.15)", text: "#22c55e" },
+  CANCELED: { bg: "rgba(239,68,68,0.15)", text: "#ef4444" },
   COMPLETED: { bg: "rgba(59,130,246,0.15)", text: "#60a5fa" },
 };
 
@@ -50,19 +50,22 @@ export function AppointmentList({ appointments }: Props) {
   if (appointments.length === 0) {
     return (
       <div
-        className="text-center py-16 text-sm rounded-2xl"
-        style={{
-          border: "2px dashed rgba(255,255,255,0.08)",
-          color: "#52525b",
-        }}
+        className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed px-6 py-14 text-center"
+        style={{ borderColor: "rgba(255,255,255,0.08)" }}
       >
-        Nenhum agendamento encontrado.
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04]">
+          <CalendarDays size={24} style={{ color: "#52525b" }} />
+        </div>
+        <p className="text-sm font-semibold text-white">Nenhum agendamento encontrado</p>
+        <p className="mt-1 max-w-xs text-xs" style={{ color: "#71717a" }}>
+          Quando seus clientes agendarem pela página pública, eles vão aparecer aqui.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {appointments.map((appt) => {
         const dateStr = new Date(appt.date).toISOString().split("T")[0];
         const isLoading = loadingId === appt.id;
@@ -71,74 +74,65 @@ export function AppointmentList({ appointments }: Props) {
         return (
           <div
             key={appt.id}
-            className="flex items-center gap-4 px-4 py-3.5 rounded-xl transition-colors"
+            className="flex flex-col gap-3 rounded-2xl px-4 py-4 transition-all hover:bg-white/[0.06] sm:flex-row sm:items-center sm:gap-4"
             style={{
               backgroundColor: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.06)",
             }}
           >
-            {/* Dot de status */}
-            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${STATUS_DOT[appt.status]}`} />
-
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <p className="font-semibold text-white text-sm">{appt.customerName}</p>
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${STATUS_DOT[appt.status]}`} />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="truncate text-sm font-semibold text-white">{appt.customerName}</p>
+                  <span
+                    className="rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                    style={{ backgroundColor: badge.bg, color: badge.text }}
+                  >
+                    {APPOINTMENT_STATUS_LABELS[appt.status]}
+                  </span>
+                </div>
+                <p className="mt-1 text-sm" style={{ color: "#a1a1aa" }}>
+                  {appt.service.name} · {appt.startTime}–{appt.endTime}
+                </p>
+                <p className="mt-0.5 text-xs" style={{ color: "#71717a" }}>
+                  {formatDateDisplay(dateStr)} {appt.customerPhone && `· ${appt.customerPhone}`}
+                </p>
               </div>
-              <p className="text-xs mt-0.5" style={{ color: "#71717a" }}>
-                {appt.service.name} · {appt.startTime}–{appt.endTime}
-              </p>
-              <p className="text-xs" style={{ color: "#52525b" }}>
-                {formatDateDisplay(dateStr)}
-              </p>
             </div>
 
-            {/* Badge status */}
-            <span
-              className="text-xs px-2.5 py-1 rounded-full font-semibold shrink-0"
-              style={{ backgroundColor: badge.bg, color: badge.text }}
-            >
-              {APPOINTMENT_STATUS_LABELS[appt.status]}
-            </span>
-
-            {/* Ações */}
             {appt.status !== "CANCELED" && appt.status !== "COMPLETED" && (
-              <div className="flex gap-1 shrink-0">
+              <div className="flex gap-2 sm:shrink-0">
                 {appt.status === "PENDING" && (
                   <button
                     onClick={() => handleStatus(appt.id, "CONFIRMED")}
                     disabled={isLoading}
-                    title="Confirmar"
-                    className="p-1.5 rounded-lg disabled:opacity-50 transition-colors"
-                    style={{ color: "#22c55e" }}
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-50 sm:flex-none"
+                    style={{ color: "#22c55e", backgroundColor: "rgba(34,197,94,0.1)" }}
                   >
-                    <Check size={15} />
+                    <Check size={14} /> Confirmar
                   </button>
                 )}
                 {appt.status === "CONFIRMED" && (
                   <button
                     onClick={() => handleStatus(appt.id, "COMPLETED")}
                     disabled={isLoading}
-                    title="Concluir"
-                    className="p-1.5 rounded-lg disabled:opacity-50 transition-colors"
-                    style={{ color: "#60a5fa" }}
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-50 sm:flex-none"
+                    style={{ color: "#60a5fa", backgroundColor: "rgba(59,130,246,0.1)" }}
                   >
-                    <CheckCheck size={15} />
+                    <CheckCheck size={14} /> Concluir
                   </button>
                 )}
                 <button
                   onClick={() => handleStatus(appt.id, "CANCELED")}
                   disabled={isLoading}
-                  title="Cancelar"
-                  className="p-1.5 rounded-lg disabled:opacity-50 transition-colors"
-                  style={{ color: "#ef4444" }}
+                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-50 sm:flex-none"
+                  style={{ color: "#ef4444", backgroundColor: "rgba(239,68,68,0.1)" }}
                 >
-                  <X size={15} />
+                  <X size={14} /> Cancelar
                 </button>
               </div>
             )}
-
-            <ChevronRight size={14} style={{ color: "#3f3f46" }} className="shrink-0" />
           </div>
         );
       })}
