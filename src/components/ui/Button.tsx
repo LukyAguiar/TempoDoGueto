@@ -21,23 +21,26 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const base =
-      "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
-      primary:
-        "bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500",
-      secondary:
-        "bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 focus:ring-brand-500",
-      ghost:
-        "text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-brand-500",
-      danger:
-        "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+      primary:  "text-black hover:opacity-90",
+      secondary:"border text-zinc-300 hover:text-white hover:border-zinc-500",
+      ghost:    "text-zinc-400 hover:text-white hover:bg-white/5",
+      danger:   "bg-red-600 text-white hover:bg-red-700",
+    };
+
+    const variantStyles: Record<string, React.CSSProperties> = {
+      primary:   { backgroundColor: "#f6b914", color: "#0a0a0a" },
+      secondary: { backgroundColor: "transparent", borderColor: "#3f3f46" },
+      ghost:     {},
+      danger:    {},
     };
 
     const sizes = {
       sm: "text-xs px-3 py-1.5",
-      md: "text-sm px-4 py-2",
-      lg: "text-base px-5 py-2.5",
+      md: "text-sm px-4 py-2.5",
+      lg: "text-base px-5 py-3",
     };
 
     return (
@@ -45,6 +48,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(base, variants[variant], sizes[size], className)}
+        style={variantStyles[variant]}
         {...props}
       >
         {loading && (

@@ -12,53 +12,53 @@ export default async function AdminBusinessesPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Barbearias</h1>
-        <p className="text-slate-500 text-sm mt-0.5">
+        <h1 className="text-2xl font-bold text-white">Barbearias</h1>
+        <p className="text-sm mt-0.5" style={{color:"#71717a"}}>
           {businesses.length} barbearia(s) na plataforma
         </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="rounded-2xl overflow-hidden" style={{backgroundColor:"#1a1a1a",border:"1px solid rgba(255,255,255,0.06)"}}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <tr className="" style={{borderBottom:"1px solid rgba(255,255,255,0.06)",backgroundColor:"rgba(255,255,255,0.03)"}}>
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Barbearia
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Proprietário
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Uso
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Status
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Cadastro
               </th>
               <th className="px-5 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="">
             {businesses.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center py-12 text-slate-400 text-sm">
+                <td colSpan={6} className="text-center py-12 text-sm" style={{color:"#52525b"}}>
                   Nenhuma barbearia cadastrada ainda.
                 </td>
               </tr>
             )}
             {businesses.map((biz) => (
-              <tr key={biz.id} className="hover:bg-slate-50 transition-colors">
+              <tr key={biz.id} className="transition-colors" style={{borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
                 {/* Nome + slug */}
                 <td className="px-5 py-4">
-                  <p className="font-medium text-slate-900">{biz.name}</p>
+                  <p className="font-medium text-white">{biz.name}</p>
                   <div className="flex items-center gap-1 mt-0.5">
                     <a
                       href={`/${biz.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-brand-600 hover:underline"
+                      className="text-xs hover:underline" style={{color:"#f6b914"}}
                     >
                       /{biz.slug}
                     </a>
@@ -69,17 +69,17 @@ export default async function AdminBusinessesPage() {
 
                 {/* Proprietário */}
                 <td className="px-5 py-4">
-                  <p className="text-slate-700">{biz.user.name}</p>
-                  <p className="text-slate-400 text-xs">{biz.user.email}</p>
+                  <p className="" style={{color:"#d4d4d8"}}>{biz.user.name}</p>
+                  <p className="text-xs" style={{color:"#52525b"}}>{biz.user.email}</p>
                 </td>
 
                 {/* Uso */}
                 <td className="px-5 py-4">
-                  <p className="text-slate-700">
+                  <p className="" style={{color:"#d4d4d8"}}>
                     <span className="font-semibold">{biz._count.appointments}</span>{" "}
-                    <span className="text-slate-400 text-xs">agendamentos</span>
+                    <span className="text-xs" style={{color:"#52525b"}}>agendamentos</span>
                   </p>
-                  <p className="text-slate-400 text-xs">
+                  <p className="text-xs" style={{color:"#52525b"}}>
                     {biz._count.services} serviço(s)
                   </p>
                 </td>
@@ -103,7 +103,7 @@ export default async function AdminBusinessesPage() {
                 </td>
 
                 {/* Cadastro */}
-                <td className="px-5 py-4 text-slate-500 text-xs">
+                <td className="px-5 py-4 text-xs" style={{color:"#71717a"}}>
                   {formatDateDisplay(biz.createdAt.toISOString().split("T")[0])}
                 </td>
 

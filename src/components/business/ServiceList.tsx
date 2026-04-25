@@ -5,13 +5,10 @@ import { Pencil, Trash2, Plus, X } from "lucide-react";
 import type { Service } from "@prisma/client";
 import { removeService } from "@/server/actions/service";
 import { ServiceForm } from "@/components/forms/ServiceForm";
-import { Button } from "@/components/ui/Button";
 import { formatCurrency } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
-type Props = {
-  services: Service[];
-};
+type Props = { services: Service[] };
 
 export function ServiceList({ services }: Props) {
   const router = useRouter();
@@ -32,28 +29,35 @@ export function ServiceList({ services }: Props) {
     router.refresh();
   }
 
-  const editingService = services.find((s) => s.id === editingId);
-
   return (
-    <div className="space-y-4">
-      {/* Header com botão de adicionar */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-500">{services.length} serviço(s) cadastrado(s)</p>
-        <Button
-          size="sm"
+    <div className="space-y-3">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-xs" style={{ color: "#52525b" }}>
+          {services.length} serviço(s)
+        </p>
+        <button
           onClick={() => { setShowForm(true); setEditingId(null); }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors"
+          style={{ backgroundColor: "#f6b914", color: "#0a0a0a" }}
         >
-          <Plus size={16} />
+          <Plus size={13} />
           Novo serviço
-        </Button>
+        </button>
       </div>
 
-      {/* Formulário de criação */}
+      {/* Form de criação */}
       {showForm && !editingId && (
-        <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
+        <div
+          className="rounded-xl p-4"
+          style={{
+            backgroundColor: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(246,185,20,0.3)",
+          }}
+        >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-slate-900">Novo serviço</h3>
-            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+            <h3 className="text-sm font-semibold text-white">Novo serviço</h3>
+            <button onClick={() => setShowForm(false)} style={{ color: "#52525b" }}>
               <X size={16} />
             </button>
           </div>
@@ -61,20 +65,30 @@ export function ServiceList({ services }: Props) {
         </div>
       )}
 
-      {/* Lista de serviços */}
+      {/* Vazio */}
       {services.length === 0 && !showForm && (
-        <div className="text-center py-10 text-slate-400 text-sm border-2 border-dashed border-slate-200 rounded-lg">
+        <div
+          className="text-center py-10 text-sm rounded-xl"
+          style={{ border: "2px dashed rgba(255,255,255,0.08)", color: "#52525b" }}
+        >
           Nenhum serviço cadastrado ainda.
         </div>
       )}
 
+      {/* Lista */}
       {services.map((service) => (
-        <div key={service.id} className="border border-slate-200 rounded-lg p-4 bg-white">
+        <div key={service.id}>
           {editingId === service.id ? (
-            <>
+            <div
+              className="rounded-xl p-4"
+              style={{
+                backgroundColor: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(246,185,20,0.3)",
+              }}
+            >
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-slate-900">Editar serviço</h3>
-                <button onClick={() => setEditingId(null)} className="text-slate-400 hover:text-slate-600">
+                <h3 className="text-sm font-semibold text-white">Editar serviço</h3>
+                <button onClick={() => setEditingId(null)} style={{ color: "#52525b" }}>
                   <X size={16} />
                 </button>
               </div>
@@ -88,36 +102,49 @@ export function ServiceList({ services }: Props) {
                 }}
                 onSuccess={handleSuccess}
               />
-            </>
+            </div>
           ) : (
-            <div className="flex items-center justify-between">
+            <div
+              className="flex items-center justify-between px-4 py-3 rounded-xl transition-colors"
+              style={{
+                backgroundColor: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}
+            >
               <div className="flex items-center gap-3">
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    service.isActive ? "bg-green-500" : "bg-slate-300"
+                <span
+                  className={`w-2 h-2 rounded-full shrink-0 ${
+                    service.isActive ? "bg-green-500" : "bg-zinc-600"
                   }`}
                 />
                 <div>
-                  <p className="font-medium text-slate-900">{service.name}</p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm font-medium text-white">{service.name}</p>
+                  <p className="text-xs mt-0.5" style={{ color: "#71717a" }}>
                     {service.durationMinutes} min
                     {service.price != null && ` · ${formatCurrency(Number(service.price))}`}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+
+              <div className="flex items-center gap-1">
                 <button
                   onClick={() => { setEditingId(service.id); setShowForm(false); }}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded"
+                  className="p-1.5 rounded-lg transition-colors"
+                  style={{ color: "#52525b" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#f6b914")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}
                 >
-                  <Pencil size={15} />
+                  <Pencil size={14} />
                 </button>
                 <button
                   onClick={() => handleDelete(service.id)}
                   disabled={deletingId === service.id}
-                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
+                  className="p-1.5 rounded-lg transition-colors disabled:opacity-50"
+                  style={{ color: "#52525b" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}
                 >
-                  <Trash2 size={15} />
+                  <Trash2 size={14} />
                 </button>
               </div>
             </div>

@@ -16,65 +16,65 @@ export default async function AdminUsersPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Usuários</h1>
-          <p className="text-slate-500 text-sm mt-0.5">
+          <h1 className="text-2xl font-bold text-white">Usuários</h1>
+          <p className="text-sm mt-0.5" style={{color:"#71717a"}}>
             {barbers.length} barbeiro(s) cadastrado(s)
           </p>
         </div>
         <CreateUserModal />
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="rounded-2xl overflow-hidden" style={{backgroundColor:"#1a1a1a",border:"1px solid rgba(255,255,255,0.06)"}}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <tr className="" style={{borderBottom:"1px solid rgba(255,255,255,0.06)",backgroundColor:"rgba(255,255,255,0.03)"}}>
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Barbeiro
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Negócio
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Status
               </th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#52525b" }}>
                 Cadastro
               </th>
               <th className="px-5 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="">
             {barbers.length === 0 && (
               <tr>
-                <td colSpan={5} className="text-center py-12 text-slate-400 text-sm">
+                <td colSpan={5} className="text-center py-12 text-sm" style={{color:"#52525b"}}>
                   Nenhum barbeiro cadastrado ainda.
                 </td>
               </tr>
             )}
             {barbers.map((user) => (
-              <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+              <tr key={user.id} className="transition-colors" style={{borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
                 <td className="px-5 py-4">
-                  <p className="font-medium text-slate-900">{user.name}</p>
-                  <p className="text-slate-400 text-xs">{user.email}</p>
+                  <p className="font-medium text-white">{user.name}</p>
+                  <p className="text-xs" style={{color:"#52525b"}}>{user.email}</p>
                 </td>
 
                 <td className="px-5 py-4">
                   {user.business ? (
                     <div>
-                      <p className="text-slate-700 font-medium">
+                      <p className="font-medium" style={{color:"#d4d4d8"}}>
                         {user.business.name}
                       </p>
                       <a
                         href={`/${user.business.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-brand-600 hover:underline"
+                        className="text-xs hover:underline" style={{color:"#f6b914"}}
                       >
                         /{user.business.slug}
                       </a>
                     </div>
                   ) : (
-                    <span className="text-slate-400 text-xs italic">
+                    <span className="text-xs italic" style={{color:"#52525b"}}>
                       Sem negócio cadastrado
                     </span>
                   )}
@@ -97,7 +97,7 @@ export default async function AdminUsersPage() {
                   </span>
                 </td>
 
-                <td className="px-5 py-4 text-slate-500 text-xs">
+                <td className="px-5 py-4 text-xs" style={{color:"#71717a"}}>
                   {formatDateDisplay(user.createdAt.toISOString().split("T")[0])}
                 </td>
 

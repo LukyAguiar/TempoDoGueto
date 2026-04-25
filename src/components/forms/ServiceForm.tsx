@@ -10,28 +10,21 @@ import { Button } from "@/components/ui/Button";
 
 type Props = {
   serviceId?: string;
-  defaultValues?: Partial<{
-    name: string;
-    durationMinutes: number;
-    price: string | number | null;
-    isActive: boolean;
-  }>;
+  defaultValues?: Partial<{ name: string; durationMinutes: number; price: string; isActive: boolean }>;
   onSuccess?: () => void;
 };
 
 export function ServiceForm({ serviceId, defaultValues, onSuccess }: Props) {
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<ServiceInput>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ServiceInput>({
     resolver: zodResolver(serviceSchema),
     defaultValues: {
       name: defaultValues?.name ?? "",
       durationMinutes: defaultValues?.durationMinutes ?? 30,
-      price: defaultValues?.price ? Number(defaultValues.price) : null,
+      price:defaultValues?.price !== undefined && defaultValues?.price !== null
+    ? Number(defaultValues.price)
+    : 0,
       isActive: defaultValues?.isActive ?? true,
     },
   });
@@ -39,63 +32,40 @@ export function ServiceForm({ serviceId, defaultValues, onSuccess }: Props) {
   async function onSubmit(data: ServiceInput) {
     setServerError(null);
     const result = await saveService(data, serviceId);
-
-    if (!result.success) {
-      setServerError(result.error);
-      return;
-    }
-
+    if (!result.success) { setServerError(result.error); return; }
     onSuccess?.();
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
       {serverError && (
-        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+        <div className="p-3 rounded-xl text-xs" style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)", color: "#f87171" }}>
           {serverError}
         </div>
       )}
 
-      <Input
-        label="Nome do serviço"
-        placeholder="Corte de cabelo"
-        error={errors.name?.message}
-        {...register("name")}
-      />
+      <Input label="Nome do serviço" placeholder="Corte de cabelo" error={errors.name?.message} {...register("name")} />
 
-      <Input
-        label="Duração (minutos)"
-        type="number"
-        min={15}
-        step={15}
-        error={errors.durationMinutes?.message}
-        {...register("durationMinutes", { valueAsNumber: true })}
-      />
-
-      <Input
-        label="Preço (opcional)"
-        type="number"
-        step="0.01"
-        min="0"
-        placeholder="50.00"
-        error={errors.price?.message}
-        {...register("price")}
-      />
+      <div className="grid grid-cols-2 gap-3">
+        <Input label="Duração (min)" type="number" min={15} step={15} error={errors.durationMinutes?.message} {...register("durationMinutes", { valueAsNumber: true })} />
+        <Input label="Preço (opcional)" type="number" step="0.01" min="0" placeholder="50.00" error={errors.price?.message} {...register("price")} />
+      </div>
 
       <div className="flex items-center gap-2">
         <input
           type="checkbox"
           id="isActive"
-          className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+          className="rounded"
+          style={{ accentColor: "#f6b914" }}
           {...register("isActive")}
         />
-        <label htmlFor="isActive" className="text-sm text-slate-700">
+        <label htmlFor="isActive" className="text-sm" style={{ color: "#a1a1aa" }}>
           Serviço ativo
         </label>
       </div>
 
-      <div className="flex justify-end gap-2 pt-2">
-        <Button type="submit" loading={isSubmitting}>
+      <div className="flex justify-end gap-2 pt-1">
+        <Button type="submit" size="sm" loading={isSubmitting}>
           {serviceId ? "Salvar" : "Adicionar serviço"}
         </Button>
       </div>
