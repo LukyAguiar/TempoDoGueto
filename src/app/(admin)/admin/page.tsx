@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma/client";
-import { Users, Store, CalendarDays, UserCheck } from "lucide-react";
+import { Users, Store, CalendarDays, UserX } from "lucide-react";
 
 export const metadata: Metadata = { title: "Admin — Visão Geral" };
 
@@ -22,8 +22,7 @@ export default async function AdminPage() {
       sub: `${activeUsers} ativos`,
       icon: Users,
       href: "/admin/users",
-      color: "text-brand-600",
-      bg: "bg-brand-50",
+      color: "#f6b914",
     },
     {
       label: "Barbearias",
@@ -31,8 +30,7 @@ export default async function AdminPage() {
       sub: `${activeBusinesses} ativas`,
       icon: Store,
       href: "/admin/businesses",
-      color: "text-purple-600",
-      bg: "bg-purple-50",
+      color: "#a78bfa",
     },
     {
       label: "Total de agendamentos",
@@ -40,24 +38,29 @@ export default async function AdminPage() {
       sub: "na plataforma",
       icon: CalendarDays,
       href: "/admin/businesses",
-      color: "text-green-600",
-      bg: "bg-green-50",
+      color: "#34d399",
     },
     {
       label: "Usuários inativos",
       value: totalUsers - activeUsers,
       sub: "bloqueados",
-      icon: UserCheck,
+      icon: UserX,
       href: "/admin/users",
-      color: "text-red-600",
-      bg: "bg-red-50",
+      color: "#f87171",
     },
   ];
 
+  const cardStyle = {
+    backgroundColor: "#1a1a1a",
+    border: "1px solid rgba(255,255,255,0.06)",
+  };
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900 mb-1">Visão Geral</h1>
-      <p className="text-slate-500 mb-8">Painel de controle da plataforma.</p>
+      <h1 className="text-2xl font-bold text-white mb-1">Visão Geral</h1>
+      <p className="mb-8 text-sm" style={{ color: "#71717a" }}>
+        Painel de controle da plataforma.
+      </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((m) => {
@@ -66,14 +69,20 @@ export default async function AdminPage() {
             <Link
               key={m.label}
               href={m.href}
-              className="bg-white rounded-xl border border-slate-200 p-5 hover:border-brand-300 hover:shadow-sm transition-all"
+              className="rounded-2xl p-5 flex items-center gap-4 transition-all hover:scale-[1.02]"
+              style={cardStyle}
             >
-              <div className={`w-10 h-10 ${m.bg} rounded-lg flex items-center justify-center mb-3`}>
-                <Icon size={20} className={m.color} />
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                style={{ backgroundColor: `${m.color}18` }}
+              >
+                <Icon size={22} style={{ color: m.color }} />
               </div>
-              <p className="text-3xl font-bold text-slate-900">{m.value}</p>
-              <p className="text-sm font-medium text-slate-700 mt-0.5">{m.label}</p>
-              <p className="text-xs text-slate-400 mt-0.5">{m.sub}</p>
+              <div>
+                <p className="text-3xl font-bold text-white">{m.value}</p>
+                <p className="text-sm font-medium text-white mt-0.5">{m.label}</p>
+                <p className="text-xs mt-0.5" style={{ color: "#52525b" }}>{m.sub}</p>
+              </div>
             </Link>
           );
         })}

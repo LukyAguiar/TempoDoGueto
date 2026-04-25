@@ -5,7 +5,7 @@ import { getBusinessByUserId } from "@/server/repositories/business.repository";
 import { prisma } from "@/lib/prisma/client";
 import { formatDateDisplay } from "@/lib/dates";
 import { APPOINTMENT_STATUS_COLORS, APPOINTMENT_STATUS_LABELS } from "@/types";
-import { CalendarDays, Clock, CheckCircle, ExternalLink } from "lucide-react";
+import { CalendarDays, Clock, CheckCircle } from "lucide-react";
 import type { AppointmentStatus } from "@prisma/client";
 
 export const metadata: Metadata = { title: "Dashboard" };
@@ -20,7 +20,7 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-bold text-white mb-2">
           Olá, {session?.user?.name?.split(" ")[0]} 👋
         </h1>
-        <p className="text-zinc-400 mb-6">
+        <p className="mb-6" style={{ color: "#71717a" }}>
           Para começar, cadastre seu negócio.
         </p>
         <Link
@@ -34,14 +34,20 @@ export default async function DashboardPage() {
     );
   }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // Início e fim do dia em UTC para evitar bug de timezone no Prisma
+  const now = new Date();
+  const todayStart = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+  );
+  const todayEnd = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+  );
 
   const [todayAppts, pendingCount, upcomingAppts] = await Promise.all([
     prisma.appointment.findMany({
       where: {
         businessId: business.id,
-        date: today,
+        date: { gte: todayStart, lte: todayEnd },
         status: { not: "CANCELED" },
       },
       include: { service: { select: { name: true } } },
@@ -51,13 +57,13 @@ export default async function DashboardPage() {
       where: {
         businessId: business.id,
         status: "PENDING",
-        date: { gte: today },
+        date: { gte: todayStart },
       },
     }),
     prisma.appointment.findMany({
       where: {
         businessId: business.id,
-        date: { gte: today },
+        date: { gte: todayStart },
         status: { notIn: ["CANCELED", "COMPLETED"] },
       },
       include: { service: { select: { name: true } } },
@@ -71,22 +77,15 @@ export default async function DashboardPage() {
   ).length;
 
   const metrics = [
-    {
-      label: "Agendamentos hoje",
-      value: todayAppts.length,
-      icon: CalendarDays,
-    },
-    {
-      label: "Pendentes (futuros)",
-      value: pendingCount,
-      icon: Clock,
-    },
-    {
-      label: "Próximos confirmados",
-      value: confirmedCount,
-      icon: CheckCircle,
-    },
+    { label: "Agendamentos hoje", value: todayAppts.length,  icon: CalendarDays },
+    { label: "Pendentes (futuros)", value: pendingCount,      icon: Clock },
+    { label: "Próximos confirmados", value: confirmedCount,  icon: CheckCircle },
   ];
+
+  const cardStyle = {
+    backgroundColor: "#1a1a1a",
+    border: "1px solid rgba(255,255,255,0.06)",
+  };
 
   return (
     <div>
@@ -114,21 +113,10 @@ export default async function DashboardPage() {
           href={`/${business.slug}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-colors"
-          style={{
-            borderColor: "#f6b914",
-            color: "#f6b914",
-            backgroundColor: "transparent",
-          }}
-          onMouseOver={(e) => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(246,185,20,0.1)";
-          }}
-          onMouseOut={(e) => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
-          }}
+          className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-colors hover:bg-yellow-400/10"
+          style={{ borderColor: "#f6b914", color: "#f6b914" }}
         >
-          <ExternalLink size={14} />
-          Painel da Barbearia
+          Ver página pública →
         </a>
       </div>
 
@@ -137,14 +125,7 @@ export default async function DashboardPage() {
         {metrics.map((m) => {
           const Icon = m.icon;
           return (
-            <div
-              key={m.label}
-              className="rounded-2xl p-5 flex items-center gap-4"
-              style={{
-                backgroundColor: "#1a1a1a",
-                border: "1px solid rgba(255,255,255,0.06)",
-              }}
-            >
+            <div key={m.label} className="rounded-2xl p-5 flex items-center gap-4" style={cardStyle}>
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
                 style={{ backgroundColor: "rgba(246,185,20,0.15)" }}
@@ -152,12 +133,8 @@ export default async function DashboardPage() {
                 <Icon size={22} style={{ color: "#f6b914" }} />
               </div>
               <div>
-                <p className="text-xs" style={{ color: "#71717a" }}>
-                  {m.label}
-                </p>
-                <p className="text-3xl font-bold text-white mt-0.5">
-                  {m.value}
-                </p>
+                <p className="text-xs" style={{ color: "#71717a" }}>{m.label}</p>
+                <p className="text-3xl font-bold text-white mt-0.5">{m.value}</p>
               </div>
             </div>
           );
@@ -165,26 +142,13 @@ export default async function DashboardPage() {
       </div>
 
       {/* Agenda de hoje */}
-      <div
-        className="rounded-2xl p-6 mb-6"
-        style={{
-          backgroundColor: "#1a1a1a",
-          border: "1px solid rgba(255,255,255,0.06)",
-        }}
-      >
+      <div className="rounded-2xl p-6 mb-6" style={cardStyle}>
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-base font-bold text-white">Agenda de hoje</h2>
-            <div
-              className="mt-1 h-0.5 w-8 rounded"
-              style={{ backgroundColor: "#f6b914" }}
-            />
+            <div className="mt-1 h-0.5 w-8 rounded" style={{ backgroundColor: "#f6b914" }} />
           </div>
-          <Link
-            href="/appointments"
-            className="text-sm font-medium hover:underline"
-            style={{ color: "#f6b914" }}
-          >
+          <Link href="/appointments" className="text-sm font-medium hover:underline" style={{ color: "#f6b914" }}>
             Ver todos →
           </Link>
         </div>
@@ -192,9 +156,7 @@ export default async function DashboardPage() {
         {todayAppts.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-5xl mb-3 opacity-20">📅</div>
-            <p className="font-semibold text-white text-sm">
-              Nenhum agendamento para hoje.
-            </p>
+            <p className="font-semibold text-white text-sm">Nenhum agendamento para hoje.</p>
             <p className="text-xs mt-1" style={{ color: "#52525b" }}>
               Quando clientes agendarem, eles aparecerão aqui.
             </p>
@@ -215,11 +177,7 @@ export default async function DashboardPage() {
                     {appt.service.name}
                   </p>
                 </div>
-                <span
-                  className={`text-xs px-2.5 py-1 rounded-full font-semibold ${
-                    APPOINTMENT_STATUS_COLORS[appt.status as AppointmentStatus]
-                  }`}
-                >
+                <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${APPOINTMENT_STATUS_COLORS[appt.status as AppointmentStatus]}`}>
                   {APPOINTMENT_STATUS_LABELS[appt.status as AppointmentStatus]}
                 </span>
               </div>
@@ -230,16 +188,8 @@ export default async function DashboardPage() {
 
       {/* Próximos agendamentos */}
       {upcomingAppts.length > 0 && (
-        <div
-          className="rounded-2xl p-6"
-          style={{
-            backgroundColor: "#1a1a1a",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          <h2 className="text-base font-bold text-white mb-4">
-            Próximos agendamentos
-          </h2>
+        <div className="rounded-2xl p-6" style={cardStyle}>
+          <h2 className="text-base font-bold text-white mb-4">Próximos agendamentos</h2>
           <div className="space-y-2">
             {upcomingAppts.map((appt) => {
               const dateStr = new Date(appt.date).toISOString().split("T")[0];
@@ -257,11 +207,7 @@ export default async function DashboardPage() {
                       {formatDateDisplay(dateStr)} às {appt.startTime}
                     </p>
                   </div>
-                  <span
-                    className={`text-xs px-2.5 py-1 rounded-full font-semibold ${
-                      APPOINTMENT_STATUS_COLORS[appt.status as AppointmentStatus]
-                    }`}
-                  >
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${APPOINTMENT_STATUS_COLORS[appt.status as AppointmentStatus]}`}>
                     {APPOINTMENT_STATUS_LABELS[appt.status as AppointmentStatus]}
                   </span>
                 </div>
