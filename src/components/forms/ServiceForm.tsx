@@ -22,7 +22,9 @@ export function ServiceForm({ serviceId, defaultValues, onSuccess }: Props) {
     defaultValues: {
       name: defaultValues?.name ?? "",
       durationMinutes: defaultValues?.durationMinutes ?? 30,
-      price: defaultValues?.price ?? "",
+      price:defaultValues?.price !== undefined && defaultValues?.price !== null
+    ? Number(defaultValues.price)
+    : 0,
       isActive: defaultValues?.isActive ?? true,
     },
   });
