@@ -9,16 +9,14 @@ import { Plus } from "lucide-react";
 
 export const metadata: Metadata = { title: "Agendamentos" };
 
-type Props = {
-  searchParams: { status?: string; period?: string };
-};
+type Props = { searchParams: { status?: string; period?: string } };
 
 const STATUS_OPTIONS = [
   { value: "upcoming", label: "Próximos" },
-  { value: "all",      label: "Todos" },
-  { value: "PENDING",  label: "Pendentes" },
-  { value: "CONFIRMED",label: "Confirmados" },
-  { value: "COMPLETED",label: "Concluídos" },
+  { value: "all", label: "Todos" },
+  { value: "PENDING", label: "Pendentes" },
+  { value: "CONFIRMED", label: "Confirmados" },
+  { value: "COMPLETED", label: "Concluídos" },
   { value: "CANCELED", label: "Cancelados" },
 ];
 
@@ -32,30 +30,23 @@ export default async function AppointmentsPage({ searchParams }: Props) {
   const fromDate = periodFilter === "upcoming" ? new Date() : undefined;
 
   const appointments = await getAppointmentsByBusiness(business.id, {
-    status: statusFilter && !["upcoming","all"].includes(statusFilter)
-      ? statusFilter
-      : undefined,
+    status: statusFilter && !["upcoming", "all"].includes(statusFilter) ? statusFilter : undefined,
     fromDate,
   });
 
-  const cardStyle = {
-    backgroundColor: "#1a1a1a",
-    border: "1px solid rgba(255,255,255,0.06)",
-  };
+  const cardStyle = { backgroundColor: "#1a1a1a", border: "1px solid rgba(255,255,255,0.06)" };
 
   return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Agendamentos</h1>
-          <p className="text-sm mt-0.5" style={{ color: "#71717a" }}>
+          <p className="mt-1 text-sm" style={{ color: "#71717a" }}>
             Gerencie os agendamentos do seu negócio.
           </p>
         </div>
-        {/* Botão de novo agendamento (futuro) */}
         <button
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition-transform active:scale-[0.98] sm:py-2.5"
           style={{ backgroundColor: "#f6b914", color: "#0a0a0a" }}
         >
           <Plus size={15} />
@@ -63,46 +54,46 @@ export default async function AppointmentsPage({ searchParams }: Props) {
         </button>
       </div>
 
-      {/* Filtros por tab */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {STATUS_OPTIONS.map((opt) => {
-          const isActive =
-            opt.value === "upcoming"
-              ? periodFilter === "upcoming" && !statusFilter
-              : opt.value === "all"
-              ? periodFilter === "all" && !statusFilter
-              : statusFilter === opt.value;
+      <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <div className="flex w-max gap-2 pb-1 sm:w-auto sm:flex-wrap">
+          {STATUS_OPTIONS.map((opt) => {
+            const isActive =
+              opt.value === "upcoming"
+                ? periodFilter === "upcoming" && !statusFilter
+                : opt.value === "all"
+                ? periodFilter === "all" && !statusFilter
+                : statusFilter === opt.value;
 
-          const href =
-            opt.value === "upcoming"
-              ? "/appointments?period=upcoming"
-              : opt.value === "all"
-              ? "/appointments?period=all"
-              : `/appointments?period=${periodFilter}&status=${opt.value}`;
+            const href =
+              opt.value === "upcoming"
+                ? "/appointments?period=upcoming"
+                : opt.value === "all"
+                ? "/appointments?period=all"
+                : `/appointments?period=${periodFilter}&status=${opt.value}`;
 
-          return (
-            <a
-              key={opt.value}
-              href={href}
-              className="px-4 py-1.5 rounded-full text-sm font-semibold transition-all"
-              style={
-                isActive
-                  ? { backgroundColor: "#f6b914", color: "#0a0a0a" }
-                  : {
-                      backgroundColor: "rgba(255,255,255,0.05)",
-                      color: "#71717a",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                    }
-              }
-            >
-              {opt.label}
-            </a>
-          );
-        })}
+            return (
+              <a
+                key={opt.value}
+                href={href}
+                className="whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all"
+                style={
+                  isActive
+                    ? { backgroundColor: "#f6b914", color: "#0a0a0a" }
+                    : {
+                        backgroundColor: "rgba(255,255,255,0.05)",
+                        color: "#71717a",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                      }
+                }
+              >
+                {opt.label}
+              </a>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Lista */}
-      <div className="rounded-2xl p-4" style={cardStyle}>
+      <div className="rounded-3xl p-3 sm:p-4" style={cardStyle}>
         <AppointmentList appointments={appointments} />
       </div>
     </div>

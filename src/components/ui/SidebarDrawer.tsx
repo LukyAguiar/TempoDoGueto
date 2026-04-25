@@ -6,24 +6,12 @@ import { cn } from "@/lib/utils";
 
 type Props = {
   children: (onClose: () => void) => React.ReactNode;
-  /** Cor do botão hamburger. Default: #363636 */
   buttonBg?: string;
 };
 
-/**
- * SidebarDrawer — wrapper responsivo reutilizável.
- * - Desktop: renderiza sidebar estática (md:static)
- * - Mobile: esconde sidebar, mostra botão hamburger, abre drawer com overlay
- *
- * Uso:
- * <SidebarDrawer>
- *   {(onClose) => <MeuConteudoDoSidebar onClose={onClose} />}
- * </SidebarDrawer>
- */
 export function SidebarDrawer({ children, buttonBg = "#363636" }: Props) {
   const [open, setOpen] = useState(false);
 
-  // Fecha com ESC
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
@@ -32,7 +20,6 @@ export function SidebarDrawer({ children, buttonBg = "#363636" }: Props) {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  // Trava scroll do body quando drawer está aberto
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -42,20 +29,18 @@ export function SidebarDrawer({ children, buttonBg = "#363636" }: Props) {
 
   return (
     <>
-      {/* ── Botão hamburger — só no mobile ─────────────────── */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Abrir menu"
-        className="md:hidden fixed top-4 left-4 z-30 p-2.5 rounded-xl text-white transition-colors"
+        className="md:hidden fixed top-4 left-4 z-30 p-3 rounded-2xl text-white shadow-lg shadow-black/30 transition-transform active:scale-95"
         style={{
           backgroundColor: buttonBg,
-          border: "1px solid rgba(255,255,255,0.1)",
+          border: "1px solid rgba(255,255,255,0.12)",
         }}
       >
         <Menu size={20} />
       </button>
 
-      {/* ── Overlay backdrop — mobile ───────────────────────── */}
       <div
         className={cn(
           "md:hidden fixed inset-0 z-40 bg-black/70 backdrop-blur-sm transition-opacity duration-300",
@@ -65,19 +50,17 @@ export function SidebarDrawer({ children, buttonBg = "#363636" }: Props) {
         aria-hidden="true"
       />
 
-      {/* ── Drawer mobile ──────────────────────────────────── */}
       <div
         className={cn(
-          "fixed top-0 left-0 h-full z-50 transition-transform duration-300 ease-in-out md:hidden",
-          "w-[280px] max-w-[85vw]",
+          "fixed top-0 left-0 h-full z-50 transition-transform duration-300 ease-out md:hidden",
+          "w-[85vw] max-w-sm shadow-2xl shadow-black/50",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Botão fechar dentro do drawer */}
         <button
           onClick={close}
           aria-label="Fechar menu"
-          className="absolute top-4 right-4 z-10 p-1.5 rounded-lg text-white/50 hover:text-white transition-colors"
+          className="absolute top-4 right-4 z-10 p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-colors"
         >
           <X size={18} />
         </button>
@@ -85,8 +68,7 @@ export function SidebarDrawer({ children, buttonBg = "#363636" }: Props) {
         {children(close)}
       </div>
 
-      {/* ── Sidebar desktop — estática ─────────────────────── */}
-      <aside className="hidden md:flex flex-col w-64 min-h-screen shrink-0">
+      <aside className="hidden md:flex flex-col w-64 min-h-screen shrink-0 sticky top-0">
         {children(() => {})}
       </aside>
     </>

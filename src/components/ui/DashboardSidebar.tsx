@@ -22,8 +22,7 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
 
   return (
     <div className="flex flex-col h-full" style={{ backgroundColor: "#111111" }}>
-      {/* Logo */}
-      <div className="px-5 py-6" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="px-5 py-7" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/logo-tempo-do-gueto.png"
@@ -33,8 +32,7 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
         />
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-5 py-6 space-y-2 overflow-y-auto">
+      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -48,29 +46,27 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
               href={item.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                "flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all active:scale-[0.98]",
                 isActive
-                  ? "text-black font-semibold"
+                  ? "text-black font-semibold shadow-lg shadow-yellow-500/10"
                   : "text-zinc-400 hover:text-white hover:bg-white/5"
               )}
               style={isActive ? { backgroundColor: "#f6b914" } : undefined}
             >
               <Icon size={18} />
-              {item.label}
+              <span className="truncate">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Imagem decorativa */}
-      <div className="mx-5 mb-4 rounded-xl overflow-hidden" style={{ height: "120px", opacity: 0.25 }}>
+      <div className="mx-5 mb-4 rounded-2xl overflow-hidden" style={{ height: "120px", opacity: 0.22 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/favela-night.png" alt="" className="w-full h-full object-cover" />
       </div>
 
-      {/* User + logout */}
       <div className="px-5 py-5" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3 mb-3 rounded-2xl bg-white/[0.03] p-3">
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center text-black font-bold text-sm shrink-0"
             style={{ backgroundColor: "#f6b914" }}
@@ -79,12 +75,12 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-white truncate">{user.name}</p>
-            <p className="text-xs truncate" style={{ color: "#52525b" }}>{user.email}</p>
+            <p className="text-xs truncate" style={{ color: "#71717a" }}>{user.email}</p>
           </div>
         </div>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm w-full transition-all text-zinc-500 hover:text-white hover:bg-white/5"
+          className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm w-full transition-all text-zinc-500 hover:text-white hover:bg-white/5 active:scale-[0.98]"
         >
           <LogOut size={16} />
           Sair

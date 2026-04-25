@@ -24,7 +24,7 @@ export default async function AdminUsersPage() {
         <CreateUserModal />
       </div>
 
-      <div className="rounded-2xl overflow-hidden" style={{backgroundColor:"#1a1a1a",border:"1px solid rgba(255,255,255,0.06)"}}>
+      <div className="rounded-2xl overflow-visible" style={{backgroundColor:"#1a1a1a",border:"1px solid rgba(255,255,255,0.06)"}}>
         <table className="w-full text-sm">
           <thead>
             <tr className="" style={{borderBottom:"1px solid rgba(255,255,255,0.06)",backgroundColor:"rgba(255,255,255,0.03)"}}>

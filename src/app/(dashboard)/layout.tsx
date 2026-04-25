@@ -18,12 +18,11 @@ export default async function DashboardLayout({
     >
       <DashboardSidebar user={session.user} />
 
-      {/* Conteúdo principal — padding-top no mobile para não ficar atrás do hamburger */}
       <main
-        className="flex-1 overflow-auto pt-16 md:pt-0 px-4 md:px-8 py-6 md:py-8"
+        className="flex-1 overflow-auto pt-20 md:pt-0 px-4 sm:px-6 lg:px-10 py-6 md:py-8 pb-24"
         style={{ minWidth: 0 }}
       >
-        {children}
+        <div className="mx-auto w-full max-w-6xl">{children}</div>
       </main>
     </div>
   );

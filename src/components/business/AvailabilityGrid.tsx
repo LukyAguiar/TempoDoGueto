@@ -68,105 +68,88 @@ export function AvailabilityGrid({ availability }: Props) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {rows.map((row) => (
         <div
           key={row.weekDay}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors"
+          className="rounded-2xl px-4 py-4 transition-colors"
           style={{
-            backgroundColor: row.enabled
-              ? "rgba(246,185,20,0.06)"
-              : "rgba(255,255,255,0.03)",
-            border: row.enabled
-              ? "1px solid rgba(246,185,20,0.2)"
-              : "1px solid rgba(255,255,255,0.06)",
+            backgroundColor: row.enabled ? "rgba(246,185,20,0.06)" : "rgba(255,255,255,0.03)",
+            border: row.enabled ? "1px solid rgba(246,185,20,0.2)" : "1px solid rgba(255,255,255,0.06)",
           }}
         >
-          {/* Toggle */}
-          <div
-            onClick={() => !row.saving && handleToggle(row.weekDay, !row.enabled)}
-            className="relative w-10 h-5 rounded-full transition-colors cursor-pointer shrink-0"
-            style={{
-              backgroundColor: row.enabled ? "#f6b914" : "#3f3f46",
-              opacity: row.saving ? 0.5 : 1,
-            }}
-          >
-            <span
-              className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform"
-              style={{ transform: row.enabled ? "translateX(20px)" : "translateX(0)" }}
-            />
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => !row.saving && handleToggle(row.weekDay, !row.enabled)}
+              className="relative h-7 w-12 shrink-0 rounded-full transition-colors disabled:cursor-not-allowed"
+              style={{ backgroundColor: row.enabled ? "#f6b914" : "#3f3f46", opacity: row.saving ? 0.5 : 1 }}
+              disabled={row.saving}
+              aria-pressed={row.enabled}
+            >
+              <span
+                className="absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow transition-transform"
+                style={{ transform: row.enabled ? "translateX(20px)" : "translateX(0)" }}
+              />
+            </button>
+
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold" style={{ color: row.enabled ? "#f4f4f5" : "#71717a" }}>
+                {WEEK_DAY_LABELS[row.weekDay]}
+              </p>
+              {!row.editing && (
+                <p className="mt-0.5 text-xs" style={{ color: row.enabled ? "#a1a1aa" : "#52525b" }}>
+                  {row.enabled ? `${row.startTime} até ${row.endTime}` : "Fechado"}
+                </p>
+              )}
+            </div>
+
+            {row.enabled && !row.editing && (
+              <button
+                onClick={() => updateRow(row.weekDay, { editing: true })}
+                className="rounded-xl p-2 transition-colors hover:bg-white/5"
+                style={{ color: "#71717a" }}
+              >
+                <Pencil size={15} />
+              </button>
+            )}
           </div>
 
-          {/* Label do dia */}
-          <span
-            className="text-sm font-medium w-36 shrink-0"
-            style={{ color: row.enabled ? "#f4f4f5" : "#52525b" }}
-          >
-            {WEEK_DAY_LABELS[row.weekDay]}
-          </span>
-
-          {/* Horários */}
-          {row.enabled ? (
-            row.editing ? (
-              <div className="flex items-center gap-2 flex-1">
-                <input
-                  type="time"
-                  value={row.startTime}
-                  onChange={(e) => updateRow(row.weekDay, { startTime: e.target.value })}
-                  className="px-2 py-1 rounded-lg text-sm text-white outline-none"
-                  style={{ backgroundColor: "#1e1e1e", border: "1px solid #3f3f46", width: "110px" }}
-                />
-                <span className="text-xs" style={{ color: "#52525b" }}>até</span>
-                <input
-                  type="time"
-                  value={row.endTime}
-                  onChange={(e) => updateRow(row.weekDay, { endTime: e.target.value })}
-                  className="px-2 py-1 rounded-lg text-sm text-white outline-none"
-                  style={{ backgroundColor: "#1e1e1e", border: "1px solid #3f3f46", width: "110px" }}
-                />
-                <button
-                  onClick={() => handleSave(row.weekDay)}
-                  disabled={row.saving}
-                  className="px-3 py-1 rounded-lg text-xs font-bold disabled:opacity-50"
-                  style={{ backgroundColor: "#f6b914", color: "#0a0a0a" }}
-                >
-                  {row.saving ? "..." : "Salvar"}
-                </button>
-                <button
-                  onClick={() => updateRow(row.weekDay, { editing: false })}
-                  className="px-3 py-1 rounded-lg text-xs font-medium"
-                  style={{ color: "#71717a" }}
-                >
-                  Cancelar
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 flex-1">
-                <span className="text-sm" style={{ color: "#a1a1aa" }}>
-                  {row.startTime}
-                </span>
-                <span className="text-xs" style={{ color: "#52525b" }}>até</span>
-                <span className="text-sm" style={{ color: "#a1a1aa" }}>
-                  {row.endTime}
-                </span>
-                <button
-                  onClick={() => updateRow(row.weekDay, { editing: true })}
-                  className="ml-2 p-1 rounded-lg transition-colors"
-                  style={{ color: "#52525b" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#f6b914")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "#52525b")}
-                >
-                  <Pencil size={13} />
-                </button>
-              </div>
-            )
-          ) : (
-            <span className="text-sm" style={{ color: "#3f3f46" }}>Fechado</span>
+          {row.enabled && row.editing && (
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:flex sm:items-center">
+              <input
+                type="time"
+                value={row.startTime}
+                onChange={(e) => updateRow(row.weekDay, { startTime: e.target.value })}
+                className="rounded-xl px-3 py-2 text-sm text-white outline-none"
+                style={{ backgroundColor: "#1e1e1e", border: "1px solid #3f3f46" }}
+              />
+              <input
+                type="time"
+                value={row.endTime}
+                onChange={(e) => updateRow(row.weekDay, { endTime: e.target.value })}
+                className="rounded-xl px-3 py-2 text-sm text-white outline-none"
+                style={{ backgroundColor: "#1e1e1e", border: "1px solid #3f3f46" }}
+              />
+              <button
+                onClick={() => handleSave(row.weekDay)}
+                disabled={row.saving}
+                className="rounded-xl px-3 py-2 text-xs font-bold disabled:opacity-50"
+                style={{ backgroundColor: "#f6b914", color: "#0a0a0a" }}
+              >
+                {row.saving ? "Salvando..." : "Salvar"}
+              </button>
+              <button
+                onClick={() => updateRow(row.weekDay, { editing: false })}
+                className="rounded-xl px-3 py-2 text-xs font-medium hover:bg-white/5"
+                style={{ color: "#a1a1aa" }}
+              >
+                Cancelar
+              </button>
+            </div>
           )}
 
-          {row.error && (
-            <p className="text-xs" style={{ color: "#ef4444" }}>{row.error}</p>
-          )}
+          {row.error && <p className="mt-3 text-xs" style={{ color: "#ef4444" }}>{row.error}</p>}
         </div>
       ))}
     </div>
