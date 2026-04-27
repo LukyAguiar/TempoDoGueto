@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { auth } from "@/lib/auth/config";
 import { getBusinessByUserId } from "@/server/repositories/business.repository";
 import { prisma } from "@/lib/prisma/client";
 import { formatDateDisplay } from "@/lib/dates";
-import { APPOINTMENT_STATUS_COLORS, APPOINTMENT_STATUS_LABELS } from "@/types";
+import { APPOINTMENT_STATUS_LABELS } from "@/types";
 import { CalendarDays, Clock, CheckCircle } from "lucide-react";
 import type { AppointmentStatus } from "@prisma/client";
 
@@ -87,10 +88,17 @@ export default async function DashboardPage() {
     border: "1px solid rgba(255,255,255,0.06)",
   };
 
+  const statusBadgeStyle: Record<AppointmentStatus, CSSProperties> = {
+    PENDING: { backgroundColor: "rgba(246,185,20,0.16)", color: "#f6b914", border: "1px solid rgba(246,185,20,0.28)" },
+    CONFIRMED: { backgroundColor: "rgba(34,197,94,0.16)", color: "#86efac", border: "1px solid rgba(34,197,94,0.22)" },
+    CANCELED: { backgroundColor: "rgba(239,68,68,0.16)", color: "#f87171", border: "1px solid rgba(239,68,68,0.22)" },
+    COMPLETED: { backgroundColor: "rgba(59,130,246,0.16)", color: "#93c5fd", border: "1px solid rgba(59,130,246,0.22)" },
+  };
+
   return (
     <div>
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 pt-4 md:pt-2 mb-8">
+      <div className="flex items-start justify-between gap-4 pt-2 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">
             Olá, {session?.user?.name?.split(" ")[0]} 👋
@@ -113,7 +121,7 @@ export default async function DashboardPage() {
           href={`/${business.slug}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden md:inline-flex items-center gap-2 px-4 py-2.5 mt-1 rounded-xl text-sm font-semibold border transition-colors hover:bg-yellow-400/10"
+          className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-colors hover:bg-yellow-400/10"
           style={{ borderColor: "#f6b914", color: "#f6b914" }}
         >
           Ver página pública →
@@ -177,7 +185,8 @@ export default async function DashboardPage() {
                     {appt.service.name}
                   </p>
                 </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${APPOINTMENT_STATUS_COLORS[appt.status as AppointmentStatus]}`}>
+                <span className="text-xs px-3 py-1 rounded-full font-semibold shrink-0"
+                  style={statusBadgeStyle[appt.status as AppointmentStatus]}>
                   {APPOINTMENT_STATUS_LABELS[appt.status as AppointmentStatus]}
                 </span>
               </div>
@@ -207,7 +216,8 @@ export default async function DashboardPage() {
                       {formatDateDisplay(dateStr)} às {appt.startTime}
                     </p>
                   </div>
-                  <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${APPOINTMENT_STATUS_COLORS[appt.status as AppointmentStatus]}`}>
+                  <span className="text-xs px-3 py-1 rounded-full font-semibold shrink-0"
+                    style={statusBadgeStyle[appt.status as AppointmentStatus]}>
                     {APPOINTMENT_STATUS_LABELS[appt.status as AppointmentStatus]}
                   </span>
                 </div>
