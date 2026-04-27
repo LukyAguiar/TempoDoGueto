@@ -23,10 +23,10 @@ export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
 };
 
 export const APPOINTMENT_STATUS_COLORS: Record<AppointmentStatus, string> = {
-  PENDING: "bg-yellow-100 text-yellow-800 ring-1 ring-yellow-300/30",
-  CONFIRMED: "bg-green-100 text-green-800 ring-1 ring-green-300/30",
-  CANCELED: "bg-red-100 text-red-800 ring-1 ring-red-300/30",
-  COMPLETED: "bg-blue-100 text-blue-800 ring-1 ring-blue-300/30",
+  PENDING: "bg-yellow-100 text-yellow-800",
+  CONFIRMED: "bg-green-100 text-green-800",
+  CANCELED: "bg-red-100 text-red-800",
+  COMPLETED: "bg-blue-100 text-blue-800",
 };
 
 // Tipo para slots de horário disponível (usado no fluxo público de agendamento)
