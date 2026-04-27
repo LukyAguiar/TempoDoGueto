@@ -90,7 +90,7 @@ export default async function DashboardPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="flex items-start justify-between gap-4 pt-4 md:pt-2 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">
             Olá, {session?.user?.name?.split(" ")[0]} 👋
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
           href={`/${business.slug}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-colors hover:bg-yellow-400/10"
+          className="hidden md:inline-flex items-center gap-2 px-4 py-2.5 mt-1 rounded-xl text-sm font-semibold border transition-colors hover:bg-yellow-400/10"
           style={{ borderColor: "#f6b914", color: "#f6b914" }}
         >
           Ver página pública →
