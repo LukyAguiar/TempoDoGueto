@@ -53,7 +53,7 @@ export function SidebarDrawer({ children, buttonBg = "#363636" }: Props) {
       <div
         className={cn(
           "fixed top-0 left-0 h-full z-50 transition-transform duration-300 ease-out md:hidden",
-          "w-[85vw] max-w-sm shadow-2xl shadow-black/50",
+          "w-[86vw] min-w-[300px] max-w-[340px] shadow-2xl shadow-black/50",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -68,7 +68,7 @@ export function SidebarDrawer({ children, buttonBg = "#363636" }: Props) {
         {children(close)}
       </div>
 
-      <aside className="hidden md:flex flex-col w-64 min-h-screen shrink-0 sticky top-0">
+      <aside className="hidden md:flex flex-col w-[300px] min-h-screen shrink-0 sticky top-0">
         {children(() => {})}
       </aside>
     </>
