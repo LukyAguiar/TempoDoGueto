@@ -11,8 +11,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "AgendaFácil",
-    template: "%s | AgendaFácil",
+    default: "Tempo do Gueto",
+    template: "%s | Tempo do Gueto",
   },
   description: "Sistema de agendamento para salões e barbearias",
 };
