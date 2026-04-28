@@ -89,10 +89,10 @@ export default async function DashboardPage() {
   };
 
   const statusBadgeStyle: Record<AppointmentStatus, CSSProperties> = {
-    PENDING: { backgroundColor: "rgba(246,185,20,0.16)", color: "#f6b914", border: "1px solid rgba(246,185,20,0.28)" },
-    CONFIRMED: { backgroundColor: "rgba(34,197,94,0.16)", color: "#86efac", border: "1px solid rgba(34,197,94,0.22)" },
-    CANCELED: { backgroundColor: "rgba(239,68,68,0.16)", color: "#f87171", border: "1px solid rgba(239,68,68,0.22)" },
-    COMPLETED: { backgroundColor: "rgba(59,130,246,0.16)", color: "#93c5fd", border: "1px solid rgba(59,130,246,0.22)" },
+    PENDING: { backgroundColor: "#fef3c7", color: "#92400e", border: "1px solid rgba(250,204,21,0.65)" },
+    CONFIRMED: { backgroundColor: "#dcfce7", color: "#166534", border: "1px solid rgba(34,197,94,0.35)" },
+    CANCELED: { backgroundColor: "#fee2e2", color: "#991b1b", border: "1px solid rgba(239,68,68,0.35)" },
+    COMPLETED: { backgroundColor: "#dbeafe", color: "#1e40af", border: "1px solid rgba(59,130,246,0.35)" },
   };
 
   return (

@@ -30,10 +30,10 @@ const STATUS_DOT: Record<AppointmentStatus, string> = {
 };
 
 const STATUS_BADGE: Record<AppointmentStatus, { bg: string; text: string }> = {
-  PENDING: { bg: "rgba(234,179,8,0.15)", text: "#f6b914" },
-  CONFIRMED: { bg: "rgba(34,197,94,0.15)", text: "#22c55e" },
-  CANCELED: { bg: "rgba(239,68,68,0.15)", text: "#ef4444" },
-  COMPLETED: { bg: "rgba(59,130,246,0.15)", text: "#60a5fa" },
+  PENDING: { bg: "#fef3c7", text: "#92400e" },
+  CONFIRMED: { bg: "#dcfce7", text: "#166534" },
+  CANCELED: { bg: "#fee2e2", text: "#991b1b" },
+  COMPLETED: { bg: "#dbeafe", text: "#1e40af" },
 };
 
 export function AppointmentList({ appointments }: Props) {
