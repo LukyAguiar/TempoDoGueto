@@ -22,22 +22,19 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
 
   return (
     <div
-      className="relative flex h-full flex-col overflow-hidden"
-      style={{
-        background:
-          "linear-gradient(180deg, #070707 0%, #0a0a0a 42%, #070707 100%)",
-        borderRight: "1px solid rgba(255,255,255,0.08)",
-      }}
+      className="relative flex h-full flex-col overflow-hidden rounded-r-[22px] bg-[#050505]"
+      style={{ borderRight: "1px solid rgba(255,255,255,0.10)" }}
     >
-      <div className="pointer-events-none absolute inset-x-0 bottom-[190px] top-[430px] overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <img
-          src="/images/favela-night.png"
+          src="/images/sidebar-bg-crown.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-45 grayscale"
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-55 grayscale"
         />
         <div className="absolute inset-0 bg-black/55" />
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#080808] via-[#080808]/70 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#070707] via-[#070707]/75 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#050505]/45 to-[#050505]" />
+        <div className="absolute inset-x-0 top-0 h-[44%] bg-gradient-to-b from-[#050505] via-[#050505]/82 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-t from-[#050505] via-[#050505]/78 to-transparent" />
       </div>
 
       <div className="relative z-20 px-7 pb-6 pt-10">
@@ -52,7 +49,7 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
         </p>
       </div>
 
-      <nav className="relative z-20 flex-1 space-y-3 overflow-y-auto px-5 py-6 sm:px-6">
+      <nav className="relative z-20 flex-1 space-y-3 overflow-y-auto px-5 pb-6 pt-5 sm:px-6">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -74,9 +71,9 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
               style={
                 isActive
                   ? {
-                      background: "linear-gradient(90deg, rgba(246,185,20,0.12), rgba(246,185,20,0.03))",
-                      border: "1px solid rgba(246,185,20,0.50)",
-                      boxShadow: "inset -3px 0 0 #f6b914, 0 10px 28px rgba(246,185,20,0.08)",
+                      background: "linear-gradient(90deg, rgba(246,185,20,0.13), rgba(246,185,20,0.035))",
+                      border: "1px solid rgba(246,185,20,0.55)",
+                      boxShadow: "inset -4px 0 0 #f6b914, 0 10px 32px rgba(246,185,20,0.10)",
                     }
                   : undefined
               }
@@ -88,8 +85,14 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
         })}
       </nav>
 
-      <div className="relative z-20 px-5 pb-7 pt-5 sm:px-6" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-        <div className="mb-4 flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.035] p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
+      <div
+        className="relative z-20 px-5 pb-7 pt-6 sm:px-6"
+        style={{
+          borderTop: "1px solid rgba(255,255,255,0.10)",
+          background: "linear-gradient(180deg, rgba(5,5,5,0.70), rgba(5,5,5,0.96))",
+        }}
+      >
+        <div className="mb-4 flex items-center gap-4 rounded-[22px] border border-white/10 bg-[#090909]/70 p-4 shadow-2xl shadow-black/30 backdrop-blur-md">
           {user.image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={user.image} alt="" className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-white/15" />
