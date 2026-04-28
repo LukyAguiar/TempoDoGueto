@@ -29,7 +29,7 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
         borderRight: "1px solid rgba(255,255,255,0.08)",
       }}
     >
-      <div className="pointer-events-none absolute inset-x-0 bottom-[185px] top-[455px] overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 bottom-[190px] top-[430px] overflow-hidden">
         <img
           src="/images/favela-night.png"
           alt=""
@@ -40,19 +40,19 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#070707] via-[#070707]/75 to-transparent" />
       </div>
 
-      <div className="relative z-20 px-8 pb-7 pt-10">
+      <div className="relative z-20 px-7 pb-6 pt-10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/logo-tempo-do-gueto.png"
           alt="Tempo do Gueto"
-          className="mx-auto h-auto w-[205px] max-w-full object-contain drop-shadow-[0_0_14px_rgba(246,185,20,0.12)]"
+          className="mx-auto h-auto w-[210px] max-w-full object-contain drop-shadow-[0_0_14px_rgba(246,185,20,0.12)]"
         />
         <p className="mt-2 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-zinc-300">
           Agenda para barbearias da quebrada
         </p>
       </div>
 
-      <nav className="relative z-20 flex-1 space-y-3 overflow-y-auto px-10 py-6">
+      <nav className="relative z-20 flex-1 space-y-3 overflow-y-auto px-5 py-6 sm:px-6">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -66,7 +66,7 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
               href={item.href}
               onClick={onClose}
               className={cn(
-                "relative flex items-center gap-4 rounded-2xl px-4 py-4 text-[17px] font-semibold leading-none transition-all active:scale-[0.98]",
+                "relative flex items-center gap-4 rounded-2xl px-5 py-4 text-[18px] font-semibold leading-none transition-all active:scale-[0.98]",
                 isActive
                   ? "text-yellow-400 shadow-[0_0_22px_rgba(246,185,20,0.08)]"
                   : "text-zinc-300 hover:bg-white/[0.04] hover:text-white"
@@ -82,13 +82,13 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
               }
             >
               <Icon size={24} className="shrink-0" strokeWidth={isActive ? 2.4 : 2.1} />
-              <span className="truncate">{item.label}</span>
+              <span className="whitespace-nowrap">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="relative z-20 px-5 pb-7 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="relative z-20 px-5 pb-7 pt-5 sm:px-6" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="mb-4 flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.035] p-4 shadow-2xl shadow-black/20 backdrop-blur-sm">
           {user.image ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -102,8 +102,8 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[17px] font-bold text-white">{user.name}</p>
-            <p className="truncate text-sm text-zinc-400">{user.email}</p>
+            <p className="truncate text-[16px] font-bold text-white sm:text-[17px]">{user.name}</p>
+            <p className="truncate text-[13px] text-zinc-400 sm:text-sm">{user.email}</p>
           </div>
           <ChevronDown size={18} className="shrink-0 text-zinc-300" />
         </div>
