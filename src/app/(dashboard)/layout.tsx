@@ -8,21 +8,18 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-
   if (!session) redirect("/login");
 
   return (
-    <div
-      className="flex min-h-screen"
-      style={{ backgroundColor: "#0d0d0d" }}
-    >
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: "#0d0d0d" }}>
+      {/* Sidebar fixa — não rola */}
       <DashboardSidebar user={session.user} />
 
-      <main
-        className="flex-1 overflow-auto px-4 sm:px-6 lg:px-10 pt-20 md:pt-8 pb-24"
-        style={{ minWidth: 0 }}
-      >
-        <div className="mx-auto w-full max-w-6xl">{children}</div>
+      {/* Área de conteúdo — única que rola */}
+      <main className="flex-1 overflow-y-auto min-w-0 pt-16 md:pt-0">
+        <div className="px-4 sm:px-6 lg:px-10 py-8 pb-24 mx-auto w-full max-w-7xl fade-in">
+          {children}
+        </div>
       </main>
     </div>
   );

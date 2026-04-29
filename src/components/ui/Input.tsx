@@ -16,8 +16,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium"
-            style={{ color: "#d4d4d8" }}
+            className="text-xs font-semibold uppercase tracking-wide"
+            style={{ color: "#71717a" }}
           >
             {label}
           </label>
@@ -26,22 +26,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            "w-full rounded-xl px-3.5 py-2.5 text-sm outline-none transition-all",
+            "w-full rounded-[12px] px-3.5 py-2.5 text-sm outline-none transition-all duration-150 h-10",
             "placeholder:text-zinc-600",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             className
           )}
           style={{
-            backgroundColor: "#1e1e1e",
-            border: error ? "1px solid rgba(239,68,68,0.6)" : "1px solid #2d2d2d",
+            backgroundColor: "rgba(255,255,255,0.04)",
+            border: error ? "1px solid rgba(239,68,68,0.5)" : "1px solid rgba(255,255,255,0.08)",
             color: "#f4f4f5",
           }}
           onFocus={(e) => {
-            e.target.style.borderColor = "#f6b914";
-            e.target.style.boxShadow = "0 0 0 3px rgba(246,185,20,0.1)";
+            e.target.style.borderColor = "rgba(246,185,20,0.5)";
+            e.target.style.boxShadow = "0 0 0 3px rgba(246,185,20,0.08)";
           }}
           onBlur={(e) => {
-            e.target.style.borderColor = error ? "rgba(239,68,68,0.6)" : "#2d2d2d";
+            e.target.style.borderColor = error ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.08)";
             e.target.style.boxShadow = "none";
           }}
           {...props}
