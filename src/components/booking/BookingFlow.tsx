@@ -113,8 +113,10 @@ export function BookingFlow({ slug, services, initialServiceId, theme = "barber"
                   <p className="font-bold text-sm" style={{ color: textColor }}>{service.name}</p>
                   {showDuration && <p className="text-xs" style={{ color: textMuted }}>{service.durationMinutes} min</p>}
                 </div>
-                {service.price != null && (
-                  {showPrices && <span className="text-sm font-black" style={{ color: primaryColor }}>{formatCurrency(Number(service.price))}</span>}
+                {showPrices && service.price != null && (
+                  <span className="text-sm font-black" style={{ color: primaryColor }}>
+                    {formatCurrency(Number(service.price))}
+                  </span>
                 )}
               </button>
             ))}
