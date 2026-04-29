@@ -3,7 +3,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { serviceSchema, type ServiceInput } from "@/schemas/service";
+import { serviceSchema } from "@/schemas/service";
+import type { z } from "zod";
+
+type ServiceInput = z.input<typeof serviceSchema>;
 import { saveService } from "@/server/actions/service";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
