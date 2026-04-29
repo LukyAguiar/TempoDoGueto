@@ -123,8 +123,7 @@ function SidebarContent({ user, onClose }: { user: Props["user"]; onClose: () =>
             <img
               src={user.image}
               alt=""
-              className="h-9 w-9 shrink-0 rounded-full object-cover"
-              style={{ ring: "2px solid rgba(246,185,20,0.3)" }}
+              className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-yellow-400/30"
             />
           ) : (
             <div
