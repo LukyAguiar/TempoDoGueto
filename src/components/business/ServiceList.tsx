@@ -37,8 +37,7 @@ export function ServiceList({ services }: Props) {
         </p>
         <button
           onClick={() => { setShowForm(true); setEditingId(null); }}
-          className="inline-flex items-center justify-center gap-1.5 rounded-2xl px-3 py-2 text-xs font-bold transition-transform active:scale-[0.98]"
-          style={{ backgroundColor: "#f6b914", color: "#0a0a0a" }}
+          className="btn-gold inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs"
         >
           <Plus size={13} />
           Novo serviço
@@ -60,7 +59,7 @@ export function ServiceList({ services }: Props) {
       {services.length === 0 && !showForm && (
         <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed px-6 py-12 text-center" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04]">
-            <Scissors size={24} style={{ color: "#52525b" }} />
+            <Scissors size={20} style={{ color: "#f6b914" }} />
           </div>
           <p className="text-sm font-semibold text-white">Nenhum serviço cadastrado</p>
           <p className="mt-1 max-w-xs text-xs" style={{ color: "#71717a" }}>
@@ -92,8 +91,8 @@ export function ServiceList({ services }: Props) {
             </div>
           ) : (
             <div
-              className="flex flex-col gap-3 rounded-2xl px-4 py-4 transition-all hover:bg-white/[0.06] sm:flex-row sm:items-center sm:justify-between"
-              style={{ backgroundColor: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
+              className="flex flex-col gap-3 rounded-[16px] px-4 py-3.5 transition-all duration-150 card-hover sm:flex-row sm:items-center sm:justify-between"
+              style={{ backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
             >
               <div className="flex items-center gap-3 min-w-0">
                 <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${service.isActive ? "bg-green-500" : "bg-zinc-600"}`} />

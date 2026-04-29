@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, X, CheckCheck, CalendarDays } from "lucide-react";
+import { Check, X, CheckCheck, CalendarDays, Clock, Phone, Scissors } from "lucide-react";
 import { changeAppointmentStatus } from "@/server/actions/appointment";
 import { formatDateDisplay } from "@/lib/dates";
 import { APPOINTMENT_STATUS_LABELS } from "@/types";
@@ -22,18 +22,36 @@ type Appointment = {
 
 type Props = { appointments: Appointment[] };
 
-const STATUS_DOT: Record<AppointmentStatus, string> = {
-  PENDING: "bg-yellow-400",
-  CONFIRMED: "bg-green-500",
-  CANCELED: "bg-red-500",
-  COMPLETED: "bg-blue-500",
-};
-
-const STATUS_BADGE: Record<AppointmentStatus, { bg: string; text: string }> = {
-  PENDING: { bg: "#fef3c7", text: "#92400e" },
-  CONFIRMED: { bg: "#dcfce7", text: "#166534" },
-  CANCELED: { bg: "#fee2e2", text: "#991b1b" },
-  COMPLETED: { bg: "#dbeafe", text: "#1e40af" },
+const STATUS_CONFIG: Record<AppointmentStatus, {
+  dot: string;
+  badgeClass: string;
+  label: string;
+  accentBorder: string;
+}> = {
+  PENDING: {
+    dot: "#fbbf24",
+    badgeClass: "badge badge-pending",
+    label: "Pendente",
+    accentBorder: "rgba(251,191,36,0.15)",
+  },
+  CONFIRMED: {
+    dot: "#4ade80",
+    badgeClass: "badge badge-confirmed",
+    label: "Confirmado",
+    accentBorder: "rgba(74,222,128,0.12)",
+  },
+  CANCELED: {
+    dot: "#f87171",
+    badgeClass: "badge badge-canceled",
+    label: "Cancelado",
+    accentBorder: "rgba(248,113,113,0.10)",
+  },
+  COMPLETED: {
+    dot: "#818cf8",
+    badgeClass: "badge badge-completed",
+    label: "Concluído",
+    accentBorder: "rgba(129,140,248,0.10)",
+  },
 };
 
 export function AppointmentList({ appointments }: Props) {
@@ -50,14 +68,17 @@ export function AppointmentList({ appointments }: Props) {
   if (appointments.length === 0) {
     return (
       <div
-        className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed px-6 py-14 text-center"
-        style={{ borderColor: "rgba(255,255,255,0.08)" }}
+        className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-16 text-center"
+        style={{ borderColor: "rgba(255,255,255,0.07)" }}
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04]">
-          <CalendarDays size={24} style={{ color: "#52525b" }} />
+        <div
+          className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
+          style={{ background: "rgba(246,185,20,0.07)", border: "1px solid rgba(246,185,20,0.12)" }}
+        >
+          <CalendarDays size={22} style={{ color: "#f6b914" }} />
         </div>
-        <p className="text-sm font-semibold text-white">Nenhum agendamento encontrado</p>
-        <p className="mt-1 max-w-xs text-xs" style={{ color: "#71717a" }}>
+        <p className="text-sm font-bold text-white">Nenhum agendamento encontrado</p>
+        <p className="mt-1.5 max-w-xs text-xs leading-relaxed" style={{ color: "#52525b" }}>
           Quando seus clientes agendarem pela página pública, eles vão aparecer aqui.
         </p>
       </div>
@@ -65,72 +86,115 @@ export function AppointmentList({ appointments }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {appointments.map((appt) => {
         const dateStr = new Date(appt.date).toISOString().split("T")[0];
         const isLoading = loadingId === appt.id;
-        const badge = STATUS_BADGE[appt.status];
+        const cfg = STATUS_CONFIG[appt.status];
+        const isDone = appt.status === "CANCELED" || appt.status === "COMPLETED";
 
         return (
           <div
             key={appt.id}
-            className="flex flex-col gap-3 rounded-2xl px-4 py-4 transition-all hover:bg-white/[0.06] sm:flex-row sm:items-center sm:gap-4"
+            className="group relative flex flex-col gap-4 rounded-[18px] p-4 transition-all duration-200 card-hover sm:flex-row sm:items-center"
             style={{
-              backgroundColor: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              backgroundColor: "rgba(255,255,255,0.03)",
+              border: `1px solid ${cfg.accentBorder}`,
             }}
           >
-            <div className="flex items-start gap-3 flex-1 min-w-0">
-              <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${STATUS_DOT[appt.status]}`} />
+            {/* Barra lateral colorida */}
+            <div
+              className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full"
+              style={{ backgroundColor: cfg.dot, boxShadow: `0 0 8px ${cfg.dot}60` }}
+            />
+
+            {/* Info principal */}
+            <div className="flex items-start gap-3 flex-1 min-w-0 pl-3">
               <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="truncate text-sm font-semibold text-white">{appt.customerName}</p>
-                  <span
-                    className="rounded-full px-2.5 py-1 text-[11px] font-semibold"
-                    style={{ backgroundColor: badge.bg, color: badge.text }}
-                  >
+                {/* Nome + badge */}
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <p className="text-[15px] font-bold text-white leading-tight">
+                    {appt.customerName}
+                  </p>
+                  <span className={cfg.badgeClass}>
+                    <span
+                      className="h-1.5 w-1.5 rounded-full"
+                      style={{ backgroundColor: cfg.dot, boxShadow: `0 0 4px ${cfg.dot}` }}
+                    />
                     {APPOINTMENT_STATUS_LABELS[appt.status]}
                   </span>
                 </div>
-                <p className="mt-1 text-sm" style={{ color: "#a1a1aa" }}>
-                  {appt.service.name} · {appt.startTime}–{appt.endTime}
-                </p>
-                <p className="mt-0.5 text-xs" style={{ color: "#71717a" }}>
-                  {formatDateDisplay(dateStr)} {appt.customerPhone && `· ${appt.customerPhone}`}
-                </p>
+
+                {/* Serviço */}
+                <div className="flex flex-wrap gap-3">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold" style={{ color: "#a1a1aa" }}>
+                    <Scissors size={12} style={{ color: "#f6b914" }} />
+                    {appt.service.name}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs" style={{ color: "#71717a" }}>
+                    <Clock size={12} />
+                    {appt.startTime} – {appt.endTime}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs" style={{ color: "#71717a" }}>
+                    <CalendarDays size={12} />
+                    {formatDateDisplay(dateStr)}
+                  </span>
+                  {appt.customerPhone && (
+                    <span className="inline-flex items-center gap-1.5 text-xs" style={{ color: "#71717a" }}>
+                      <Phone size={12} />
+                      {appt.customerPhone}
+                    </span>
+                  )}
+                </div>
+
+                {appt.notes && (
+                  <p className="mt-2 text-xs italic rounded-lg px-2.5 py-1.5 inline-block"
+                    style={{ color: "#71717a", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                    "{appt.notes}"
+                  </p>
+                )}
               </div>
             </div>
 
-            {appt.status !== "CANCELED" && appt.status !== "COMPLETED" && (
-              <div className="flex gap-2 sm:shrink-0">
+            {/* Ações */}
+            {!isDone && (
+              <div className="flex gap-2 pl-3 sm:pl-0 sm:shrink-0">
                 {appt.status === "PENDING" && (
                   <button
                     onClick={() => handleStatus(appt.id, "CONFIRMED")}
                     disabled={isLoading}
-                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-50 sm:flex-none"
-                    style={{ color: "#22c55e", backgroundColor: "rgba(34,197,94,0.1)" }}
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all disabled:opacity-50 sm:flex-none hover:scale-[1.02] active:scale-[0.97]"
+                    style={{ color: "#4ade80", backgroundColor: "rgba(74,222,128,0.10)", border: "1px solid rgba(74,222,128,0.20)" }}
                   >
-                    <Check size={14} /> Confirmar
+                    <Check size={13} /> Confirmar
                   </button>
                 )}
                 {appt.status === "CONFIRMED" && (
                   <button
                     onClick={() => handleStatus(appt.id, "COMPLETED")}
                     disabled={isLoading}
-                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-50 sm:flex-none"
-                    style={{ color: "#60a5fa", backgroundColor: "rgba(59,130,246,0.1)" }}
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all disabled:opacity-50 sm:flex-none hover:scale-[1.02] active:scale-[0.97]"
+                    style={{ color: "#818cf8", backgroundColor: "rgba(129,140,248,0.10)", border: "1px solid rgba(129,140,248,0.20)" }}
                   >
-                    <CheckCheck size={14} /> Concluir
+                    <CheckCheck size={13} /> Concluir
                   </button>
                 )}
                 <button
                   onClick={() => handleStatus(appt.id, "CANCELED")}
                   disabled={isLoading}
-                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-50 sm:flex-none"
-                  style={{ color: "#ef4444", backgroundColor: "rgba(239,68,68,0.1)" }}
+                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all disabled:opacity-50 sm:flex-none hover:scale-[1.02] active:scale-[0.97]"
+                  style={{ color: "#f87171", backgroundColor: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.18)" }}
                 >
-                  <X size={14} /> Cancelar
+                  <X size={13} /> Cancelar
                 </button>
+              </div>
+            )}
+
+            {isLoading && (
+              <div className="absolute inset-0 rounded-[18px] flex items-center justify-center"
+                style={{ backgroundColor: "rgba(13,13,13,0.6)", backdropFilter: "blur(2px)" }}>
+                <div className="h-4 w-4 rounded-full border-2 border-t-transparent animate-spin"
+                  style={{ borderColor: "#f6b914", borderTopColor: "transparent" }} />
               </div>
             )}
           </div>

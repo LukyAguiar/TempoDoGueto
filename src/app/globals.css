@@ -4,15 +4,92 @@
 
 @layer base {
   :root {
-    --background: 255 255 255;
-    --foreground: 15 23 42;
+    --gold: #f6b914;
+    --gold-dim: rgba(246,185,20,0.12);
+    --gold-glow: 0 0 20px rgba(246,185,20,0.18);
+    --surface: #1a1a1a;
+    --surface-hover: rgba(255,255,255,0.055);
+    --border: rgba(255,255,255,0.07);
+    --border-gold: rgba(246,185,20,0.35);
+    --text-muted: #71717a;
+    --text-secondary: #a1a1aa;
+    --radius-card: 20px;
   }
 
   body {
-    @apply bg-white text-slate-900;
+    @apply bg-[#0d0d0d] text-white antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
   }
 
-  * {
-    @apply box-border;
+  * { @apply box-border; }
+
+  /* Scrollbar refinada */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+}
+
+@layer utilities {
+  /* Card padrão */
+  .card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+  }
+
+  /* Glow dourado nos botões */
+  .btn-gold {
+    background-color: var(--gold);
+    color: #0a0a0a;
+    font-weight: 700;
+    border-radius: 14px;
+    transition: opacity 0.15s, transform 0.12s, box-shadow 0.15s;
+    box-shadow: 0 0 0 0 rgba(246,185,20,0);
+  }
+  .btn-gold:hover {
+    opacity: 0.92;
+    box-shadow: 0 0 18px rgba(246,185,20,0.30);
+  }
+  .btn-gold:active { transform: scale(0.97); }
+
+  /* Hover padrão em cards */
+  .card-hover {
+    transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  }
+  .card-hover:hover {
+    background-color: rgba(255,255,255,0.055);
+    border-color: rgba(255,255,255,0.11);
+  }
+
+  /* Badge status */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .badge-pending  { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.30); }
+  .badge-confirmed{ background: rgba(34,197,94,0.12);  color: #4ade80; border: 1px solid rgba(34,197,94,0.28); }
+  .badge-canceled { background: rgba(239,68,68,0.10);  color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+  .badge-completed{ background: rgba(99,102,241,0.12); color: #818cf8; border: 1px solid rgba(99,102,241,0.28); }
+
+  /* Fade-in suave */
+  .fade-in { animation: fadeIn 0.22s ease both; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Slide-in da sidebar mobile */
+  .slide-in { animation: slideIn 0.25s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+  @keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
   }
 }

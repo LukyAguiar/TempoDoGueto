@@ -38,13 +38,13 @@ export default async function AppointmentsPage({ searchParams }: Props) {
     getServicesByBusinessId(business.id),
   ]);
 
-  const cardStyle = { backgroundColor: "#1a1a1a", border: "1px solid rgba(255,255,255,0.06)" };
+  const cardStyle = { backgroundColor: "#161616", border: "1px solid rgba(255,255,255,0.06)" };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Agendamentos</h1>
+          <h1 className="text-[26px] font-bold text-white leading-tight">Agendamentos</h1>
           <p className="mt-1 text-sm" style={{ color: "#71717a" }}>
             Gerencie os agendamentos do seu negócio.
           </p>
@@ -73,7 +73,7 @@ export default async function AppointmentsPage({ searchParams }: Props) {
               <a
                 key={opt.value}
                 href={href}
-                className="whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all"
+                className="whitespace-nowrap rounded-full px-4 py-2 text-xs font-bold transition-all"
                 style={
                   isActive
                     ? { backgroundColor: "#f6b914", color: "#0a0a0a" }

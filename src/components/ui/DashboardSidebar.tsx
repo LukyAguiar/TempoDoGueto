@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { CalendarDays, Scissors, Clock, LayoutDashboard, Store, LogOut, ChevronDown } from "lucide-react";
+import {
+  CalendarDays, Scissors, Clock, LayoutDashboard,
+  Store, LogOut, ExternalLink,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SidebarDrawer } from "@/components/ui/SidebarDrawer";
 
@@ -17,39 +20,47 @@ const navItems = [
 
 type Props = { user: { name?: string | null; email?: string | null; image?: string | null } };
 
-function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose: () => void }) {
+function SidebarContent({ user, onClose }: { user: Props["user"]; onClose: () => void }) {
   const pathname = usePathname();
 
   return (
     <div
-      className="relative flex h-full flex-col overflow-hidden rounded-r-[22px] bg-[#050505]"
-      style={{ borderRight: "1px solid rgba(255,255,255,0.10)" }}
+      className="relative flex h-full flex-col overflow-hidden"
+      style={{
+        backgroundColor: "#050505",
+        borderRight: "1px solid rgba(255,255,255,0.07)",
+      }}
     >
+      {/* Fundo favela */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <img
           src="/images/sidebar-bg-crown.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-55 grayscale"
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-50 grayscale"
         />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#050505]/45 to-[#050505]" />
-        <div className="absolute inset-x-0 top-0 h-[44%] bg-gradient-to-b from-[#050505] via-[#050505]/82 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-t from-[#050505] via-[#050505]/78 to-transparent" />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#050505]/40 to-[#050505]" />
+        <div className="absolute inset-x-0 top-0 h-[45%] bg-gradient-to-b from-[#050505] via-[#050505]/85 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent" />
       </div>
 
-      <div className="relative z-20 px-7 pb-6 pt-10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* Logo */}
+      <div className="relative z-20 px-6 pt-8 pb-5">
         <img
           src="/images/logo-tempo-do-gueto.png"
           alt="Tempo do Gueto"
-          className="mx-auto h-auto w-[210px] max-w-full object-contain drop-shadow-[0_0_14px_rgba(246,185,20,0.12)]"
+          className="mx-auto h-auto w-[190px] max-w-full object-contain drop-shadow-[0_0_18px_rgba(246,185,20,0.14)]"
         />
-        <p className="mt-2 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-zinc-300">
+        <p className="mt-2 text-center text-[9px] font-bold uppercase tracking-[0.12em]" style={{ color: "#52525b" }}>
           Agenda para barbearias da quebrada
         </p>
       </div>
 
-      <nav className="relative z-20 flex-1 space-y-3 overflow-y-auto px-5 pb-6 pt-5 sm:px-6">
+      {/* Divisor */}
+      <div className="relative z-20 mx-5 mb-4 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)" }} />
+
+      {/* Nav */}
+      <nav className="relative z-20 flex-1 overflow-y-auto px-4 pb-4 space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -63,59 +74,89 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
               href={item.href}
               onClick={onClose}
               className={cn(
-                "relative flex items-center gap-4 rounded-2xl px-5 py-4 text-[18px] font-semibold leading-none transition-all active:scale-[0.98]",
+                "group relative flex items-center gap-3 rounded-[14px] px-4 py-3 text-[13.5px] font-semibold leading-none transition-all duration-150",
                 isActive
-                  ? "text-yellow-400 shadow-[0_0_22px_rgba(246,185,20,0.08)]"
-                  : "text-zinc-300 hover:bg-white/[0.04] hover:text-white"
+                  ? "text-[#f6b914]"
+                  : "text-zinc-400 hover:text-white hover:bg-white/[0.045]"
               )}
               style={
                 isActive
                   ? {
-                      background: "linear-gradient(90deg, rgba(246,185,20,0.13), rgba(246,185,20,0.035))",
-                      border: "1px solid rgba(246,185,20,0.55)",
-                      boxShadow: "inset -4px 0 0 #f6b914, 0 10px 32px rgba(246,185,20,0.10)",
+                      background: "linear-gradient(90deg, rgba(246,185,20,0.14), rgba(246,185,20,0.04))",
+                      border: "1px solid rgba(246,185,20,0.22)",
+                      boxShadow: "inset -3px 0 0 #f6b914, 0 4px 24px rgba(246,185,20,0.08)",
                     }
-                  : undefined
+                  : { border: "1px solid transparent" }
               }
             >
-              <Icon size={24} className="shrink-0" strokeWidth={isActive ? 2.4 : 2.1} />
-              <span className="whitespace-nowrap">{item.label}</span>
+              <Icon
+                size={17}
+                className="shrink-0 transition-transform duration-150 group-hover:scale-110"
+                strokeWidth={isActive ? 2.5 : 2}
+              />
+              <span className="truncate">{item.label}</span>
+              {isActive && (
+                <span
+                  className="ml-auto h-1.5 w-1.5 rounded-full shrink-0"
+                  style={{ backgroundColor: "#f6b914", boxShadow: "0 0 6px #f6b914" }}
+                />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      <div
-        className="relative z-20 px-5 pb-7 pt-6 sm:px-6"
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.10)",
-          background: "linear-gradient(180deg, rgba(5,5,5,0.70), rgba(5,5,5,0.96))",
-        }}
-      >
-        <div className="mb-4 flex items-center gap-4 rounded-[22px] border border-white/10 bg-[#090909]/70 p-4 shadow-2xl shadow-black/30 backdrop-blur-md">
+      {/* Divisor */}
+      <div className="relative z-20 mx-5 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)" }} />
+
+      {/* Perfil + logout */}
+      <div className="relative z-20 px-4 pt-4 pb-5 space-y-2">
+        {/* Card perfil */}
+        <div
+          className="flex items-center gap-3 rounded-[16px] p-3"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.07)",
+          }}
+        >
           {user.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={user.image} alt="" className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-white/15" />
+            <img
+              src={user.image}
+              alt=""
+              className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-yellow-400/30"
+            />
           ) : (
             <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-lg font-bold text-black ring-2 ring-white/15"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-black"
               style={{ backgroundColor: "#f6b914" }}
             >
               {user.name?.charAt(0).toUpperCase() || "U"}
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[16px] font-bold text-white sm:text-[17px]">{user.name}</p>
-            <p className="truncate text-[13px] text-zinc-400 sm:text-sm">{user.email}</p>
+            <p className="truncate text-[13px] font-bold text-white leading-tight">{user.name}</p>
+            <p className="truncate text-[11px] leading-tight mt-0.5" style={{ color: "#52525b" }}>{user.email}</p>
           </div>
-          <ChevronDown size={18} className="shrink-0 text-zinc-300" />
         </div>
+
+        {/* Logout */}
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-[17px] font-semibold text-zinc-400 transition-all hover:bg-white/5 hover:text-white active:scale-[0.98]"
+          className="flex w-full items-center gap-3 rounded-[14px] px-4 py-2.5 text-[13px] font-semibold transition-all hover:bg-white/[0.04] active:scale-[0.98]"
+          style={{ color: "#52525b", border: "1px solid transparent" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.color = "#f87171";
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.15)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.06)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.color = "#52525b";
+            (e.currentTarget as HTMLElement).style.borderColor = "transparent";
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+          }}
         >
-          <LogOut size={23} />
-          Sair
+          <LogOut size={15} className="shrink-0" />
+          Sair da conta
         </button>
       </div>
     </div>
@@ -124,8 +165,8 @@ function BarberSidebarContent({ user, onClose }: { user: Props["user"]; onClose:
 
 export function DashboardSidebar({ user }: Props) {
   return (
-    <SidebarDrawer buttonBg="#363636">
-      {(onClose) => <BarberSidebarContent user={user} onClose={onClose} />}
+    <SidebarDrawer buttonBg="#161616">
+      {(onClose) => <SidebarContent user={user} onClose={onClose} />}
     </SidebarDrawer>
   );
 }
