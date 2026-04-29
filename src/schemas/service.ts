@@ -8,9 +8,13 @@ export const serviceSchema = z.object({
     .min(15, "Duração mínima é 15 minutos")
     .max(480, "Duração máxima é 8 horas"),
   price: z
-    .string()
+    .union([z.string(), z.number()])
     .optional()
-    .transform((val) => (val === "" || val === undefined ? null : parseFloat(val)))
+    .transform((val) => {
+      if (val === "" || val === undefined || val === null) return null;
+      const n = typeof val === "number" ? val : parseFloat(val);
+      return isNaN(n) ? null : n;
+    })
     .pipe(z.number().min(0).nullable()),
   isActive: z.boolean().default(true),
 });
