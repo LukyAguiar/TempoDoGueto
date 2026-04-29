@@ -66,6 +66,7 @@ model Business {
   availability  Availability[]
   blockedSlots  BlockedSlot[]
   appointments  Appointment[]
+  pageConfig    PageConfig?
 
   @@map("businesses")
 }
@@ -150,4 +151,36 @@ model Appointment {
   service  Service  @relation(fields: [serviceId], references: [id])
 
   @@map("appointments")
+}
+
+// ─────────────────────────────────────────────
+// Page Configuration (appearance editor)
+// ─────────────────────────────────────────────
+
+model PageConfig {
+  id         String   @id @default(cuid())
+  businessId String   @unique
+  theme      String   @default("barber") // barber | salon | minimal | premium
+  primaryColor   String  @default("#f6b914")
+  accentColor    String  @default("#f6b914")
+  bgColor        String  @default("#0d0d0d")
+  cardBg         String  @default("#1a1a1a")
+  textColor      String  @default("#ffffff")
+  buttonText     String  @default("Agendar agora")
+  slogan         String?
+  instagram      String?
+  whatsapp       String?
+  bannerUrl      String?
+  overlayOpacity Int     @default(50) // 0-100
+  sections       Json    @default("[\"hero\",\"services\",\"team\",\"gallery\",\"location\"]")
+  teamMembers    Json    @default("[]")
+  gallery        Json    @default("[]")
+  showPrices     Boolean @default(true)
+  showDuration   Boolean @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("page_configs")
 }

@@ -16,9 +16,26 @@ import { ChevronLeft } from "lucide-react";
 type Props = {
   slug: string;
   services: Service[];
+  initialServiceId?: string;
+  theme?: string;
+  primaryColor?: string;
+  cardBg?: string;
+  textColor?: string;
+  buttonText?: string;
+  showPrices?: boolean;
+  showDuration?: boolean;
 };
 
 type Step = "service" | "datetime" | "details" | "success";
+
+function isColorDark(hex: string): boolean {
+  try {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 < 128;
+  } catch { return true; }
+}
 
 function getNextDays(count: number): string[] {
   const days: string[] = [];
@@ -35,9 +52,15 @@ function getNextDays(count: number): string[] {
   return days;
 }
 
-export function BookingFlow({ slug, services }: Props) {
-  const [step, setStep] = useState<Step>("service");
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+export function BookingFlow({ slug, services, initialServiceId, theme = "barber", primaryColor = "#f6b914", cardBg = "#161616", textColor = "#ffffff", buttonText = "Confirmar agendamento", showPrices = true, showDuration = true }: Props) {
+  const isDark = isColorDark(cardBg);
+  const btnText = isColorDark(primaryColor) ? "#ffffff" : "#000000";
+  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const textMuted = isDark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)";
+  const [selectedService, setSelectedService] = useState<Service | null>(
+    initialServiceId ? (services.find((s) => s.id === initialServiceId) ?? null) : null
+  );
+  const [step, setStep] = useState<Step>(initialServiceId ? "datetime" : "service");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -68,14 +91,10 @@ export function BookingFlow({ slug, services }: Props) {
   // ── Step 1: Seleção de serviço ──────────────────────────────
   if (step === "service") {
     return (
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">
-          Escolha um serviço
-        </h2>
+      <div className="rounded-[20px] p-6" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}` }}>
+        <h2 className="text-lg font-bold mb-4" style={{ color: textColor }}>Escolha um serviço</h2>
         {services.length === 0 ? (
-          <p className="text-slate-400 text-sm">
-            Nenhum serviço disponível no momento.
-          </p>
+          <p className="text-sm" style={{ color: textMuted }}>Nenhum serviço disponível no momento.</p>
         ) : (
           <div className="space-y-2">
             {services.map((service) => (
@@ -85,18 +104,17 @@ export function BookingFlow({ slug, services }: Props) {
                   setSelectedService(service);
                   setStep("datetime");
                 }}
-                className="w-full flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-brand-400 hover:bg-brand-50 transition-colors text-left"
+                className="w-full flex items-center justify-between p-4 rounded-[14px] transition-all duration-150 text-left"
+                style={{ backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)", border: `1px solid ${borderColor}` }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = `${primaryColor}55`; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = borderColor; }}
               >
                 <div>
-                  <p className="font-medium text-slate-900">{service.name}</p>
-                  <p className="text-sm text-slate-500">
-                    {service.durationMinutes} min
-                  </p>
+                  <p className="font-bold text-sm" style={{ color: textColor }}>{service.name}</p>
+                  {showDuration && <p className="text-xs" style={{ color: textMuted }}>{service.durationMinutes} min</p>}
                 </div>
                 {service.price != null && (
-                  <span className="text-brand-700 font-semibold text-sm">
-                    {formatCurrency(Number(service.price))}
-                  </span>
+                  {showPrices && <span className="text-sm font-black" style={{ color: primaryColor }}>{formatCurrency(Number(service.price))}</span>}
                 )}
               </button>
             ))}
@@ -138,16 +156,15 @@ export function BookingFlow({ slug, services }: Props) {
       <div className="space-y-4">
         <button
           onClick={() => setStep("service")}
-          className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900"
+          className="flex items-center gap-1 text-sm font-semibold transition-opacity hover:opacity-70"
+          style={{ color: textMuted }}
         >
           <ChevronLeft size={16} /> Voltar
         </button>
 
         {/* Data */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">
-            Escolha uma data
-          </h2>
+        <div className="rounded-[20px] p-6" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}` }}>
+          <h2 className="text-lg font-bold mb-4" style={{ color: textColor }}>Escolha uma data</h2>
           <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
             {days.map((day) => {
               const d = new Date(day + "T12:00:00");
@@ -160,15 +177,15 @@ export function BookingFlow({ slug, services }: Props) {
                 <button
                   key={day}
                   onClick={() => handleDateSelect(day)}
-                  className={`flex flex-col items-center p-2 rounded-lg border text-sm transition-colors ${
-                    isSelected
-                      ? "border-brand-600 bg-brand-600 text-white"
-                      : "border-slate-200 hover:border-brand-300 hover:bg-brand-50"
-                  }`}
+                  className="flex flex-col items-center p-2 rounded-[12px] text-sm transition-all duration-150"
+                  style={isSelected
+                    ? { backgroundColor: primaryColor, color: isColorDark(primaryColor) ? "#fff" : "#000", border: `1px solid ${primaryColor}` }
+                    : { backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)", border: `1px solid ${borderColor}`, color: textColor }
+                  }
                 >
-                  <span className="text-xs opacity-70 capitalize">{weekDay}</span>
-                  <span className="font-bold text-base">{dayNum}</span>
-                  <span className="text-xs opacity-70 capitalize">{month}</span>
+                  <span className="text-[11px] opacity-60 capitalize">{weekDay}</span>
+                  <span className="font-black text-base">{dayNum}</span>
+                  <span className="text-[11px] opacity-60 capitalize">{month}</span>
                 </button>
               );
             })}
@@ -177,8 +194,8 @@ export function BookingFlow({ slug, services }: Props) {
 
         {/* Horários */}
         {selectedDate && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">
+          <div className="rounded-[20px] p-6" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}` }}>
+            <h2 className="text-lg font-bold mb-4" style={{ color: textColor }}>
               Horários disponíveis em{" "}
               <span className="text-brand-700">
                 {formatDateDisplay(selectedDate)}
@@ -186,14 +203,14 @@ export function BookingFlow({ slug, services }: Props) {
             </h2>
 
             {loadingSlots && (
-              <div className="flex items-center gap-2 text-slate-400 text-sm">
-                <div className="w-4 h-4 border-2 border-brand-400 border-t-transparent rounded-full animate-spin" />
+              <div className="flex items-center gap-2 text-sm" style={{ color: textMuted }}>
+                <div className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: primaryColor, borderTopColor: "transparent" }} />
                 Carregando horários...
               </div>
             )}
 
             {!loadingSlots && noSlotsMsg && (
-              <p className="text-slate-400 text-sm">{noSlotsMsg}</p>
+              <p className="text-sm" style={{ color: textMuted }}>{noSlotsMsg}</p>
             )}
 
             {!loadingSlots && availableSlots.length > 0 && (
@@ -205,7 +222,10 @@ export function BookingFlow({ slug, services }: Props) {
                       setSelectedTime(slot);
                       setStep("details");
                     }}
-                    className="py-2 px-3 rounded-lg border border-slate-200 text-sm font-medium hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700 transition-colors"
+                    className="py-2 px-3 rounded-[10px] text-sm font-bold transition-all duration-150"
+                    style={{ backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)", border: `1px solid ${borderColor}`, color: textColor }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = primaryColor; (e.currentTarget as HTMLElement).style.color = isColorDark(primaryColor) ? "#fff" : "#000"; (e.currentTarget as HTMLElement).style.borderColor = primaryColor; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)"; (e.currentTarget as HTMLElement).style.color = textColor; (e.currentTarget as HTMLElement).style.borderColor = borderColor; }}
                   >
                     {slot}
                   </button>
@@ -243,27 +263,26 @@ export function BookingFlow({ slug, services }: Props) {
       <div className="space-y-4">
         <button
           onClick={() => setStep("datetime")}
-          className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900"
+          className="flex items-center gap-1 text-sm font-semibold transition-opacity hover:opacity-70"
+          style={{ color: textMuted }}
         >
           <ChevronLeft size={16} /> Voltar
         </button>
 
         {/* Resumo do que foi escolhido */}
-        <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 text-sm">
-          <p className="font-semibold text-brand-900">{selectedService!.name}</p>
-          <p className="text-brand-700 mt-0.5">
+        <div className="rounded-[16px] p-4 text-sm" style={{ backgroundColor: `${primaryColor}12`, border: `1px solid ${primaryColor}30` }}>
+          <p className="font-black" style={{ color: primaryColor }}>{selectedService!.name}</p>
+          <p className="mt-0.5 font-medium" style={{ color: textColor }}>
             {formatDateDisplay(selectedDate!)} às {selectedTime}
             {" · "}{selectedService!.durationMinutes} min
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">
-            Seus dados
-          </h2>
+        <div className="rounded-[20px] p-6" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}` }}>
+          <h2 className="text-lg font-bold mb-4" style={{ color: textColor }}>Seus dados</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {serverError && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+              <div className="p-3 rounded-xl text-sm" style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171" }}>
                 {serverError}
               </div>
             )}
@@ -297,7 +316,7 @@ export function BookingFlow({ slug, services }: Props) {
               size="lg"
               loading={isSubmitting}
             >
-              {isSubmitting ? "Confirmando agendamento..." : "Confirmar agendamento"}
+              {isSubmitting ? "Confirmando..." : buttonText}
             </Button>
           </form>
         </div>
