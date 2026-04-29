@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   CalendarDays, Scissors, Clock, LayoutDashboard,
-  Store, LogOut, ExternalLink,
+  Store, LogOut, ExternalLink, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SidebarDrawer } from "@/components/ui/SidebarDrawer";
@@ -16,6 +16,7 @@ const navItems = [
   { href: "/services",     label: "Serviços",        icon: Scissors },
   { href: "/availability", label: "Disponibilidade", icon: Clock },
   { href: "/business",     label: "Meu Negócio",     icon: Store },
+  { href: "/appearance",   label: "Aparência",       icon: Sparkles },
 ];
 
 type Props = { user: { name?: string | null; email?: string | null; image?: string | null } };

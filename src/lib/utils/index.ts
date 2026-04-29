@@ -33,3 +33,10 @@ export function slugify(text: string): string {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 }
+
+/**
+ * Gera ID curto aleatório
+ */
+export function nanoid(len = 8): string {
+  return Math.random().toString(36).slice(2, 2 + len);
+}
