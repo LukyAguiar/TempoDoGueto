@@ -3,9 +3,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import { getBusinessByUserId } from "@/server/repositories/business.repository";
 import { getAppointmentsByBusiness } from "@/server/repositories/appointment.repository";
+import { getServicesByBusinessId } from "@/server/repositories/service.repository";
 import { AppointmentList } from "@/components/business/AppointmentList";
+import { AppointmentsHeader } from "@/components/business/AppointmentsHeader";
 import type { AppointmentStatus } from "@prisma/client";
-import { Plus } from "lucide-react";
 
 export const metadata: Metadata = { title: "Agendamentos" };
 
@@ -29,10 +30,13 @@ export default async function AppointmentsPage({ searchParams }: Props) {
   const periodFilter = searchParams.period ?? "upcoming";
   const fromDate = periodFilter === "upcoming" ? new Date() : undefined;
 
-  const appointments = await getAppointmentsByBusiness(business.id, {
-    status: statusFilter && !["upcoming", "all"].includes(statusFilter) ? statusFilter : undefined,
-    fromDate,
-  });
+  const [appointments, services] = await Promise.all([
+    getAppointmentsByBusiness(business.id, {
+      status: statusFilter && !["upcoming", "all"].includes(statusFilter) ? statusFilter : undefined,
+      fromDate,
+    }),
+    getServicesByBusinessId(business.id),
+  ]);
 
   const cardStyle = { backgroundColor: "#1a1a1a", border: "1px solid rgba(255,255,255,0.06)" };
 
@@ -45,13 +49,7 @@ export default async function AppointmentsPage({ searchParams }: Props) {
             Gerencie os agendamentos do seu negócio.
           </p>
         </div>
-        <button
-          className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition-transform active:scale-[0.98] sm:py-2.5"
-          style={{ backgroundColor: "#f6b914", color: "#0a0a0a" }}
-        >
-          <Plus size={15} />
-          Novo agendamento
-        </button>
+        <AppointmentsHeader slug={business.slug} services={services} />
       </div>
 
       <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
