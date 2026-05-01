@@ -3,19 +3,15 @@
 import { appointmentSchema } from "@/schemas/appointment";
 import { getBusinessBySlug, getBusinessByUserId } from "@/server/repositories/business.repository";
 import { getServiceById } from "@/server/repositories/service.repository";
-import { getAvailableSlots } from "@/server/services/slots.service";
-import {
-  createAppointment,
-  updateAppointmentStatus,
-  getAppointmentById,
-} from "@/server/repositories/appointment.repository";
-import { addMinutesToTime } from "@/lib/dates";
+import { addMinutesToTime, generateTimeSlots, hasTimeOverlap, isSlotInPast } from "@/lib/dates";
+import { updateAppointmentStatus, getAppointmentById } from "@/server/repositories/appointment.repository";
 import { auth } from "@/lib/auth/config";
 import { revalidatePath } from "next/cache";
 import {
   notifyAppointmentCreated,
   notifyStatusChanged,
 } from "@/server/services/notification.service";
+import { prisma } from "@/lib/prisma/client";
 
 // ─── Tipos ────────────────────────────────────────────────────
 
@@ -53,7 +49,6 @@ export async function bookAppointment(
   const business = await getBusinessBySlug(slug);
   if (!business) return { success: false, error: "Negócio não encontrado." };
 
-  // Bloqueia agendamento se a barbearia estiver inativa
   if (!business.isActive) {
     return { success: false, error: "Este negócio não está aceitando agendamentos no momento." };
   }
@@ -63,31 +58,86 @@ export async function bookAppointment(
     return { success: false, error: "Serviço inválido." };
   }
 
-  const availableSlots = await getAvailableSlots({
-    businessId: business.id,
-    date,
-    durationMinutes: service.durationMinutes,
-  });
-
-  if (!availableSlots.includes(startTime)) {
-    return {
-      success: false,
-      error: "Este horário não está mais disponível. Escolha outro.",
-    };
-  }
-
   const endTime = addMinutesToTime(startTime, service.durationMinutes);
 
-  const appointment = await createAppointment({
-    businessId: business.id,
-    serviceId,
-    customerName,
-    customerPhone,
-    date,
-    startTime,
-    endTime,
-    notes,
-  });
+  // ── Transação atômica: verifica disponibilidade e cria o agendamento ──
+  // Isso evita race condition onde dois clientes reservam o mesmo slot
+  // simultaneamente (check-then-act em operações separadas).
+  let appointment: Awaited<ReturnType<typeof prisma.appointment.create>>;
+
+  try {
+    appointment = await prisma.$transaction(async (tx) => {
+      // 1. Re-verifica disponibilidade dentro da transação
+      const availability = await tx.availability.findUnique({
+        where: {
+          businessId_weekDay: {
+            businessId: business.id,
+            weekDay: new Date(date + "T12:00:00").getDay(),
+          },
+        },
+      });
+
+      if (!availability) {
+        throw new Error("Dia sem disponibilidade configurada.");
+      }
+
+      const candidateSlots = generateTimeSlots(
+        availability.startTime,
+        availability.endTime,
+        service.durationMinutes
+      );
+
+      if (!candidateSlots.includes(startTime)) {
+        throw new Error("Horário fora do período de funcionamento.");
+      }
+
+      if (isSlotInPast(date, startTime)) {
+        throw new Error("Não é possível agendar em horários passados.");
+      }
+
+      const dateObj = new Date(date + "T12:00:00");
+
+      const existingAppointments = await tx.appointment.findMany({
+        where: {
+          businessId: business.id,
+          date: dateObj,
+          status: { not: "CANCELED" },
+        },
+        select: { startTime: true, endTime: true },
+      });
+
+      const blockedSlots = await tx.blockedSlot.findMany({
+        where: { businessId: business.id, date: dateObj },
+        select: { startTime: true, endTime: true },
+      });
+
+      const hasConflict = [...existingAppointments, ...blockedSlots].some(
+        (slot) => hasTimeOverlap(startTime, endTime, slot.startTime, slot.endTime)
+      );
+
+      if (hasConflict) {
+        throw new Error("Este horário não está mais disponível. Escolha outro.");
+      }
+
+      // 2. Cria o agendamento dentro da mesma transação
+      return tx.appointment.create({
+        data: {
+          businessId: business.id,
+          serviceId,
+          customerName,
+          customerPhone,
+          date: dateObj,
+          startTime,
+          endTime,
+          notes,
+          status: "PENDING",
+        },
+      });
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erro ao criar agendamento.";
+    return { success: false, error: message };
+  }
 
   revalidatePath(`/${slug}`);
   revalidatePath("/appointments");
@@ -128,7 +178,6 @@ export async function changeAppointmentStatus(
   const business = await getBusinessByUserId(session.user.id);
   if (!business) return { success: false, error: "Negócio não encontrado." };
 
-  // Bloqueia agendamento se a barbearia estiver inativa
   if (!business.isActive) {
     return { success: false, error: "Este negócio não está aceitando agendamentos no momento." };
   }
@@ -140,11 +189,9 @@ export async function changeAppointmentStatus(
 
   await updateAppointmentStatus(appointmentId, status);
 
-  // Revalida a página de status do cliente
   revalidatePath(`/booking/${appointmentId}`);
   revalidatePath("/appointments");
 
-  // Dispara notificação para o cliente
   await notifyStatusChanged(status, {
     appointmentId,
     customerName: appointment.customerName,
