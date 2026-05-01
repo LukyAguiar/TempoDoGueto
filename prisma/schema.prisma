@@ -150,6 +150,9 @@ model Appointment {
   business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
   service  Service  @relation(fields: [serviceId], references: [id])
 
+  // Índices para queries frequentes de listagem e verificação de slots
+  @@index([businessId, date])
+  @@index([businessId, date, status])
   @@map("appointments")
 }
 

@@ -26,13 +26,16 @@ export async function createAppointment(data: {
   endTime: string;
   notes?: string;
 }) {
+  // Usa T12:00:00 (meio-dia) para evitar problema de fuso horário (UTC-3 → dia anterior)
+  const dateObj = new Date(data.date + "T12:00:00");
+
   return prisma.appointment.create({
     data: {
       businessId: data.businessId,
       serviceId: data.serviceId,
       customerName: data.customerName,
       customerPhone: data.customerPhone,
-      date: new Date(data.date + "T00:00:00.000Z"),
+      date: dateObj,
       startTime: data.startTime,
       endTime: data.endTime,
       notes: data.notes,

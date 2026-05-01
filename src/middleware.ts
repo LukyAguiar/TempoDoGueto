@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
-  const role = (req.auth?.user as any)?.role as string | undefined;
+  const role = req.auth?.user?.role;
   const pathname = req.nextUrl.pathname;
 
   // ── Rotas de admin ────────────────────────────────────────
