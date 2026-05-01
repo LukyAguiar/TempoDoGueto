@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s | Tempo do Gueto",
   },
     icons: {
-    icon: "/images/favicon.png",
+    icon: "/images/Texu-2.png",
   },
   description: "Sistema de agendamento para salões e barbearias",
 };
